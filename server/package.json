@@ -1,0 +1,26 @@
+{
+  "name": "backyard-rocketeers-server",
+  "version": "1.0.0",
+  "description": "Multiplayer game server for Backyard Rocketeers",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "serve": "node dist/index.js"
+  },
+  "keywords": ["colyseus", "multiplayer", "game", "websocket"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "colyseus": "^0.15.17",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.2"
+  }
+}
