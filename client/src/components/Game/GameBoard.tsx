@@ -1,5 +1,3 @@
-import React from "react";
-
 interface GameBoardProps {
   gameState: any;
   playerId: string | null;

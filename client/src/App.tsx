@@ -1,4 +1,17 @@
 import { useState } from "react";
+import {
+  Paper,
+  Title,
+  Text,
+  TextInput,
+  Button,
+  Stack,
+  Alert,
+  Box,
+  Center,
+} from "@mantine/core";
+import { IconRocket, IconAlertCircle } from "@tabler/icons-react";
+import { motion } from "motion/react";
 import { useGameRoom } from "./hooks/useGameRoom";
 import { GameBoard } from "./components/Game/GameBoard";
 
@@ -6,7 +19,8 @@ function App() {
   const [playerName, setPlayerName] = useState("");
   const [hasJoined, setHasJoined] = useState(false);
 
-  const { gameState, isConnected, error, playerId, connect, sendMessage } = useGameRoom(playerName);
+  const { gameState, isConnected, error, playerId, connect, sendMessage } =
+    useGameRoom(playerName);
 
   const handleJoin = async () => {
     if (playerName.trim()) {
@@ -18,99 +32,107 @@ function App() {
   // Show join screen if not connected
   if (!hasJoined || !isConnected) {
     return (
-      <div
+      <Box
         style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
           minHeight: "100vh",
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          color: "white",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px",
         }}
       >
-        <div
-          style={{
-            background: "white",
-            color: "#333",
-            padding: "40px",
-            borderRadius: "12px",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-            maxWidth: "400px",
-            width: "90%",
-          }}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          <h1 style={{ marginBottom: "10px", fontSize: "2em" }}>🚀 Backyard Rocketeers</h1>
-          <p style={{ marginBottom: "30px", color: "#666" }}>
-            A multiplayer card game - race to Mars!
-          </p>
-
-          {error && (
-            <div
-              style={{
-                padding: "10px",
-                background: "#ffebee",
-                color: "#c62828",
-                borderRadius: "4px",
-                marginBottom: "20px",
-              }}
-            >
-              {error}
-            </div>
-          )}
-
-          <div style={{ marginBottom: "20px" }}>
-            <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
-              Player Name:
-            </label>
-            <input
-              type="text"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              placeholder="Enter your name"
-              onKeyPress={(e) => e.key === "Enter" && handleJoin()}
-              style={{
-                width: "100%",
-                padding: "12px",
-                fontSize: "1em",
-                border: "2px solid #ddd",
-                borderRadius: "4px",
-                boxSizing: "border-box",
-              }}
-            />
-          </div>
-
-          <button
-            onClick={handleJoin}
-            disabled={!playerName.trim()}
-            style={{
-              width: "100%",
-              padding: "12px",
-              fontSize: "1.1em",
-              background: playerName.trim() ? "#667eea" : "#ccc",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: playerName.trim() ? "pointer" : "not-allowed",
-              fontWeight: "bold",
-            }}
+          <Paper
+            shadow="xl"
+            p="xl"
+            radius="lg"
+            style={{ maxWidth: 450, width: "100%" }}
           >
-            {isConnected ? "Connecting..." : "Join Game"}
-          </button>
+            <Stack gap="lg">
+              <Center>
+                <motion.div
+                  animate={{
+                    rotate: [0, 5, -5, 5, 0],
+                    scale: [1, 1.05, 1, 1.05, 1],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: "reverse",
+                  }}
+                >
+                  <IconRocket size={64} stroke={1.5} color="#7950f2" />
+                </motion.div>
+              </Center>
 
-          <div style={{ marginTop: "20px", fontSize: "0.9em", color: "#999", textAlign: "center" }}>
-            {isConnected ? "✓ Connected" : "Ready to play"}
-          </div>
-        </div>
-      </div>
+              <div>
+                <Title order={1} ta="center" mb="xs">
+                  Backyard Rocketeers
+                </Title>
+                <Text c="dimmed" size="sm" ta="center">
+                  Race to Mars in this multiplayer card game
+                </Text>
+              </div>
+
+              {error && (
+                <Alert
+                  icon={<IconAlertCircle size={16} />}
+                  title="Connection Error"
+                  color="red"
+                >
+                  {error}
+                </Alert>
+              )}
+
+              <TextInput
+                label="Player Name"
+                placeholder="Enter your name"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleJoin()}
+                size="md"
+                required
+              />
+
+              <Button
+                onClick={handleJoin}
+                disabled={!playerName.trim() || isConnected}
+                size="lg"
+                fullWidth
+                loading={isConnected && !hasJoined}
+              >
+                {isConnected && !hasJoined ? "Joining..." : "Launch Game"}
+              </Button>
+
+              <Text size="xs" c="dimmed" ta="center">
+                {isConnected ? "✓ Connected to server" : "Ready to connect"}
+              </Text>
+            </Stack>
+          </Paper>
+        </motion.div>
+      </Box>
     );
   }
 
   // Show game board when connected
   return (
-    <div style={{ minHeight: "100vh", background: "#fafafa" }}>
-      <GameBoard gameState={gameState} playerId={playerId} onSendMessage={sendMessage} />
-    </div>
+    <Box
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(to bottom, #0f0c29, #302b63, #24243e)",
+      }}
+    >
+      <GameBoard
+        gameState={gameState}
+        playerId={playerId}
+        onSendMessage={sendMessage}
+      />
+    </Box>
   );
 }
 

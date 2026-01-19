@@ -3,6 +3,7 @@ import { GameState } from "../schemas/GameState";
 import { Player } from "../schemas/Player";
 import { CardSchema } from "../schemas/CardSchema";
 import { rollDice, roll1d6, sumDice } from "../utils/dice";
+import { CardRegistry } from "../cards/CardRegistry";
 
 /**
  * GameRoom - Main game logic for Backyard Rocketeers.
@@ -94,24 +95,20 @@ export class GameRoom extends Room<GameState> {
 
   /**
    * Initialize card decks for all levels.
-   * For Phase 1, we'll create simple placeholder cards.
-   * Full card implementation comes in Phase 2+.
+   * Uses CardRegistry to generate proper decks with correct card quantities.
    */
   private initializeDecks(): void {
-    // TODO: Phase 2 - Implement actual cards from CARDS_CATALOG.md
-    // For now, create basic placeholder cards for testing
-
-    // Level 1 placeholder cards
-    for (let i = 0; i < 20; i++) {
-      this.state.level1Deck.push(
-        new CardSchema(`test-card-${i}`, `Test Card ${i}`, "component", "Placeholder card")
-      );
-    }
+    // Generate Level 1 deck from CardRegistry
+    this.state.level1Deck = CardRegistry.generateLevel1Deck();
+    this.state.level2Deck = CardRegistry.generateLevel2Deck();
+    this.state.level3Deck = CardRegistry.generateLevel3Deck();
 
     // Shuffle decks
     this.shuffleDeck(this.state.level1Deck);
     this.shuffleDeck(this.state.level2Deck);
     this.shuffleDeck(this.state.level3Deck);
+
+    console.log(`Initialized decks - Level 1: ${this.state.level1Deck.length} cards`);
   }
 
   /**
@@ -306,7 +303,7 @@ export class GameRoom extends Room<GameState> {
 
   /**
    * Handle play card request.
-   * TODO: Phase 2 - Implement actual card logic
+   * Validates and executes card logic using CardRegistry.
    */
   private handlePlayCard(client: Client, message: any): void {
     const player = this.state.players.get(client.sessionId);
@@ -324,7 +321,7 @@ export class GameRoom extends Room<GameState> {
       return;
     }
 
-    const { cardId, targetPlayerId } = message;
+    const { cardId, targetPlayerId, additionalData } = message;
 
     // Find card in hand
     const cardIndex = player.hand.findIndex((c: CardSchema) => c.id === cardId);
@@ -333,19 +330,44 @@ export class GameRoom extends Room<GameState> {
       return;
     }
 
-    const card = player.hand[cardIndex];
-    if (!card) return;
+    const cardSchema = player.hand[cardIndex];
+    if (!cardSchema) return;
 
-    // TODO: Phase 2 - Implement card validation and execution
-    // For now, just remove from hand and broadcast
+    // Get card implementation from registry
+    const cardImpl = CardRegistry.getCardById(cardSchema.id);
+    if (!cardImpl) {
+      client.send("error", { message: "Unknown card type!" });
+      return;
+    }
+
+    // Validate card can be played
+    if (!cardImpl.canPlay(this.state, player, targetPlayerId)) {
+      client.send("error", { message: "Cannot play this card!" });
+      return;
+    }
+
+    // Remove from hand
     player.hand.splice(cardIndex, 1);
 
-    this.broadcast("card_played", {
-      playerId: client.sessionId,
-      cardId: cardId,
-      cardName: card.name,
-      targetPlayerId: targetPlayerId || null
-    });
+    // Execute card effect
+    try {
+      cardImpl.apply(this.state, player, targetPlayerId, additionalData);
+
+      this.broadcast("card_played", {
+        playerId: client.sessionId,
+        cardId: cardId,
+        cardName: cardSchema.name,
+        cardType: cardSchema.type,
+        targetPlayerId: targetPlayerId || null,
+        success: true,
+      });
+    } catch (error) {
+      console.error("Error executing card:", error);
+      client.send("error", { message: "Failed to execute card!" });
+
+      // Return card to hand on failure
+      player.hand.push(cardSchema);
+    }
   }
 
   /**

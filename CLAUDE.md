@@ -31,6 +31,14 @@ Before implementing ANYTHING, read these documents IN ORDER:
 - **Backend:** Railway.app or Render.com
 - **CI/CD:** Github Actions
 
+### Code Quality
+- **Linter/Formatter:** Biome (latest version)
+- **Configuration:** Recommended settings with React support for client
+- **Scripts:**
+  - `npm run lint` - Check for issues
+  - `npm run lint:fix` - Auto-fix issues
+  - `npm run format` - Format code
+
 ## Architecture Principles
 
 ### 1. Class-Based Card System
