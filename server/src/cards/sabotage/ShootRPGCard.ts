@@ -1,19 +1,18 @@
 import { SabotageCard } from "../SabotageCard";
 import { GameState } from "../../schemas/GameState";
 import { Player } from "../../schemas/Player";
-import { roll1d6 } from "../../utils/dice";
 
 /**
  * Shoot An RPG - Destroy 1 component (2 on roll 5-6).
- * Direct targeted destruction sabotage.
+ * Roll: 1d6. 5-6 = destroy 2 components, otherwise destroy 1.
  *
  * See CARDS_CATALOG.md - "Shoot An RPG"
  */
 export class ShootRPGCard extends SabotageCard {
-  readonly id = "shoot_rpg";
+  readonly id = "Uff4shh3MegAoFCpxEP9P";
   readonly name = "Shoot An RPG";
-  readonly description = "Destroy 1 component. Roll 5-6: destroy 2 components.";
-  readonly levels = [1];
+  readonly description = "Hasta la vista, baby!";
+  readonly availableAtLevels = [1];
   readonly isCovert = false;
 
   apply(gameState: GameState, player: Player, targetPlayerId?: string): void {
@@ -22,8 +21,8 @@ export class ShootRPGCard extends SabotageCard {
     const target = gameState.players.get(targetPlayerId);
     if (!target || target.rocketComponents.length === 0) return;
 
-    // Roll for bonus destruction
-    const roll = roll1d6();
+    // Roll for bonus destruction (would use actual dice utility)
+    const roll = Math.floor(Math.random() * 6) + 1;
     const destroyCount = roll >= 5 ? 2 : 1;
 
     // Destroy components (from the end, arbitrary choice)

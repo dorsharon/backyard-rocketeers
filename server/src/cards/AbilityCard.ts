@@ -18,7 +18,6 @@ export abstract class AbilityCard extends Card {
       this.description,
       this.isCovert,
       0,
-      0
     );
   }
 }

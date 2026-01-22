@@ -10,8 +10,8 @@ import { CardSchema } from "../schemas/CardSchema";
  * See GAME_RULES.md - "Rocket Components" section.
  */
 export abstract class ComponentCard extends Card {
+  readonly type = "component" as const;
   abstract readonly strength: number; // 0-3
-  abstract readonly tier: number; // 1=Improvised, 2=Second-hand, 3=Cutting Edge
   abstract readonly componentType:
     | "launch_pad"
     | "fuselage"
@@ -21,9 +21,11 @@ export abstract class ComponentCard extends Card {
     | "boosters"
     | "staging"
     | "defense"
-    | "fuel_tank";
+    | "fuel_tank"
+    | "rover"
+    | "generator"
+    | "antenna";
 
-  readonly type = "component" as const;
 
   /**
    * Check if component can be placed on player's rocket.
@@ -101,6 +103,12 @@ export abstract class ComponentCard extends Card {
         return "Fuel Tank";
       case "launch_pad":
         return "Launch Pad";
+      case "rover":
+        return "Rover";
+      case "generator":
+        return "Generator";
+      case "antenna":
+        return "Antenna";
       default:
         return "Component";
     }
@@ -114,7 +122,6 @@ export abstract class ComponentCard extends Card {
       this.description,
       this.isCovert,
       this.strength,
-      this.tier
     );
   }
 }

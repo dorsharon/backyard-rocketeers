@@ -1,0 +1,25 @@
+import { EnhancementCard } from "../EnhancementCard";
+import { GameState } from "../../schemas/GameState";
+import { Player } from "../../schemas/Player";
+
+/**
+ * UHF Transceiver - Immune to Cyber Attack.
+ * Defensive enhancement for Level 2.
+ *
+ * See CARDS_CATALOG.md - "UHF Transceiver"
+ */
+export class UHFTransceiverCard extends EnhancementCard {
+  readonly id = "uhf_transceiver";
+  readonly name = "UHF Transceiver";
+  readonly description =
+    "This com device is not affected by a cyber attack, so you can avoid navigation errors.";
+  readonly availableAtLevels = [2];
+  readonly isCovert = false;
+
+  apply(gameState: GameState, player: Player, targetPlayerId?: string): void {
+    // Ongoing protection: completely blocks Cyber Attack sabotage
+    // Navigation errors from Cyber Attack have no effect
+    // Prevents 50km setbacks from Cyber Attack card
+    player.hasUHFTransceiver = true;
+  }
+}

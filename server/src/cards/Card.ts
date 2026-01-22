@@ -14,7 +14,7 @@ export abstract class Card {
   abstract readonly name: string;
   abstract readonly type: "component" | "sabotage" | "ability" | "enhancement";
   abstract readonly description: string;
-  abstract readonly levels: number[]; // Which levels this card appears in [1], [2], [3], or [1,2,3]
+  abstract readonly availableAtLevels: number[];
   abstract readonly isCovert: boolean;
 
   /**

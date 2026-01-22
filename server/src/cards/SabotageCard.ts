@@ -47,7 +47,6 @@ export abstract class SabotageCard extends Card {
       this.description,
       this.isCovert,
       0,
-      0
     );
   }
 }

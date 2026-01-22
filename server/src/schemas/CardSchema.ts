@@ -25,7 +25,6 @@ export class CardSchema extends Schema {
     description: string = "",
     isCovert: boolean = false,
     strength: number = 0,
-    tier: number = 0
   ) {
     super();
     this.id = id;
@@ -35,6 +34,5 @@ export class CardSchema extends Schema {
     this.isCovert = isCovert;
     this.isRevealed = !isCovert; // Non-covert cards are always revealed
     this.strength = strength;
-    this.tier = tier;
   }
 }

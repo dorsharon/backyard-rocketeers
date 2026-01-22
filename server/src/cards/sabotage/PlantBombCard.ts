@@ -3,16 +3,19 @@ import { GameState } from "../../schemas/GameState";
 import { Player } from "../../schemas/Player";
 
 /**
- * Plant Bomb - Covert sabotage that destroys a chosen component when revealed.
- * Placed covertly on opponent's rocket, can be detonated later.
+ * Plant Bomb - Covert sabotage that destroys a chosen component when activated.
+ *
+ * Covert: Yes
+ * Effect: Place covertly on opponent's rocket, detonate later to destroy chosen component
+ * Can be detected by X-Ray Machine or Security Audit
  *
  * See CARDS_CATALOG.md - "Plant Bomb"
  */
 export class PlantBombCard extends SabotageCard {
-  readonly id = "plant_bomb";
+  readonly id = "JxcNwV0pjzJDz82LnxHek";
   readonly name = "Plant Bomb";
-  readonly description = "Covert. Place on opponent rocket. Detonate to destroy chosen component.";
-  readonly levels = [1];
+  readonly description = "Just don't blow up anything during lunch.";
+  readonly availableAtLevels = [1];
   readonly isCovert = true;
 
   canPlay(gameState: GameState, player: Player, targetPlayerId?: string): boolean {
