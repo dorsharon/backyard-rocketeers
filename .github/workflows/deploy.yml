@@ -60,12 +60,10 @@ jobs:
 
       - name: Build
         working-directory: client
-        env:
-          VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
-        run: npm run build
+        run: npm run build:prod
 
       - name: Upload build artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: client/dist
 

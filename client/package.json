@@ -6,10 +6,9 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
+    "build:prod": "tsc && vite build --mode production",
     "preview": "vite preview",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "format": "biome format --write ."
+    "lint": "biome check ."
   },
   "dependencies": {
     "@mantine/core": "^8.3.12",

@@ -1,7 +1,7 @@
 import { Client, Room } from 'colyseus.js';
 
 // Colyseus client configuration
-const SERVER_URL = (import.meta as any).env?.VITE_SERVER_URL || 'ws://localhost:2567';
+const SERVER_URL = (import.meta as any).env?.VITE_SERVER_URL;
 
 let client: Client | null = null;
 
