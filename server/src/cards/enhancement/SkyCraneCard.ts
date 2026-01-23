@@ -21,6 +21,7 @@ export class SkyCraneCard extends EnhancementCard {
 		// Removes all landing failure risks
 		// Negates nose cone failure checks
 		// Must be played before landing attempt
-		player.hasSkyCrane = true;
+		// Check with: player.hasCard('sky_crane')
+		player.enhancements.push(this.toSchema());
 	}
 }

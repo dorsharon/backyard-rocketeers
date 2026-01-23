@@ -20,6 +20,7 @@ export class UHFTransceiverCard extends EnhancementCard {
 		// Ongoing protection: completely blocks Cyber Attack sabotage
 		// Navigation errors from Cyber Attack have no effect
 		// Prevents 50km setbacks from Cyber Attack card
-		player.hasUHFTransceiver = true;
+		// Check with: player.hasCard('uhf_transceiver')
+		player.enhancements.push(this.toSchema());
 	}
 }

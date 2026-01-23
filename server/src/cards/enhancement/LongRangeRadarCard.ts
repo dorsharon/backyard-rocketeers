@@ -19,6 +19,7 @@ export class LongRangeRadarCard extends EnhancementCard {
 		// Ongoing protection: completely negates Asteroid Storm sabotage
 		// Asteroid Storms played against this player have no effect
 		// Defensive enhancement paired with other hazard protections
-		player.hasLongRangeRadar = true;
+		// Check with: player.hasCard('long_range_radar')
+		player.enhancements.push(this.toSchema());
 	}
 }

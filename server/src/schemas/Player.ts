@@ -103,4 +103,15 @@ export class Player extends Schema {
 
 		return hasFuselage && hasNoseCone && hasFins && hasThruster;
 	}
+
+	/**
+	 * Check if player has an active enhancement card by its base ID.
+	 * Enhancement cards add themselves to the enhancements array when played.
+	 *
+	 * @param cardId - The base card ID (e.g., 'all_terrain_wheels')
+	 * @returns true if the enhancement is active
+	 */
+	hasCard(cardId: string): boolean {
+		return this.enhancements.some((card) => card.id.startsWith(cardId));
+	}
 }

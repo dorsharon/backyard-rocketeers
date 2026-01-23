@@ -26,7 +26,10 @@ export class ReverseEngineeringCard extends AbilityCard {
 		// Second-hand -> Improvised
 		// Improvised -> destroyed/removed
 
-		target.rocketComponents.forEach((component) => {
+		// Collect indices of improvised components to remove (in reverse order)
+		const indicesToRemove: number[] = [];
+
+		target.rocketComponents.forEach((component, index) => {
 			const componentName = component.name;
 
 			// Check for Cutting Edge (contains "Cutting Edge")
@@ -49,13 +52,15 @@ export class ReverseEngineeringCard extends AbilityCard {
 				component.strength = Math.max(1, component.strength - 1);
 			}
 			// Improvised components are destroyed (can't downgrade further)
-			// They will be removed after this loop
+			else if (componentName.includes('Improvised')) {
+				indicesToRemove.push(index);
+			}
 		});
 
-		// Remove destroyed (Improvised) components
-		target.rocketComponents = target.rocketComponents.filter(
-			(component) => !component.name.includes('Improvised'),
-		);
+		// Remove destroyed (Improvised) components in reverse order to maintain indices
+		for (let i = indicesToRemove.length - 1; i >= 0; i--) {
+			target.rocketComponents.splice(indicesToRemove[i], 1);
+		}
 
 		// Check if rocket is destroyed (no components left)
 		if (target.rocketComponents.length === 0) {

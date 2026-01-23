@@ -23,6 +23,7 @@ export class SignalAmplifierCard extends EnhancementCard {
 		// - Satellite Dish (2) → 3 signal (instant win!)
 		// - Deep Space Array (3) → 4 signal (guaranteed victory)
 		// Very powerful for signal win condition
-		player.hasSignalAmplifier = true;
+		// Check with: player.hasCard('signal_amplifier')
+		player.enhancements.push(this.toSchema());
 	}
 }

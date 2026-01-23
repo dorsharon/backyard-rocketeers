@@ -20,6 +20,7 @@ export class SolarSailCard extends EnhancementCard {
 		// Ongoing passive effect: synergizes with Solar Wind card
 		// Provides +20% speed bonus when Solar Wind is active
 		// Implemented through game logic that checks for this enhancement
-		player.hasSolarSail = true;
+		// Check with: player.hasCard('solar_sail')
+		player.enhancements.push(this.toSchema());
 	}
 }

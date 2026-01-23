@@ -20,6 +20,7 @@ export class SpySatelliteCard extends EnhancementCard {
 	apply(gameState: GameState, player: Player, targetPlayerId?: string): void {
 		// Ongoing effect: reveals all opponent cards except covert cards
 		// Provides information advantage for strategic planning
-		player.hasSpySatellite = true;
+		// Check with: player.hasCard('spy_satellite')
+		player.enhancements.push(this.toSchema());
 	}
 }

@@ -1,3 +1,4 @@
+import type { CardSchema } from '../../schemas/CardSchema';
 import type { GameState } from '../../schemas/GameState';
 import type { Player } from '../../schemas/Player';
 import { AbilityCard } from '../AbilityCard';
@@ -21,7 +22,7 @@ export class InsurancePolicyCard extends AbilityCard {
 		gameState: GameState,
 		player: Player,
 		targetPlayerId?: string,
-		additionalData?: any,
+		additionalData?: unknown,
 	): void {
 		// This card is played covertly on the player's rocket
 		// When rocket is destroyed, the player chooses 2 components to keep
@@ -29,28 +30,30 @@ export class InsurancePolicyCard extends AbilityCard {
 
 		if (!additionalData) return;
 
-		const { savedComponentIds = [] } = additionalData;
+		const { savedComponentIds = [] } = additionalData as {
+			savedComponentIds?: string[];
+		};
 
-		// Find the 2 components to save
-		const componentsToSave: typeof player.rocketComponents = [];
+		// Find the 2 components to save (using regular array for collection)
+		const componentsToSave: CardSchema[] = [];
 
-		savedComponentIds.forEach((componentId: string) => {
+		for (const componentId of savedComponentIds) {
 			const component = player.rocketComponents.find(
 				(c) => c.id === componentId,
 			);
 			if (component) {
 				componentsToSave.push(component);
 			}
-		});
+		}
 
 		// Move saved components to player's hand
-		componentsToSave.forEach((component) => {
+		for (const component of componentsToSave) {
 			const index = player.rocketComponents.indexOf(component);
 			if (index > -1) {
 				player.rocketComponents.splice(index, 1);
 				player.hand.push(component);
 			}
-		});
+		}
 
 		// Remove this card from player's rocket (it was played as covert)
 		const cardIndex = player.rocketComponents.findIndex(

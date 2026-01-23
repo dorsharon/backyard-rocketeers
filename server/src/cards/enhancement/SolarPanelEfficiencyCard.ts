@@ -26,6 +26,7 @@ export class SolarPanelEfficiencyCard extends EnhancementCard {
 		// - Cutting Edge Solar (30%) → 35% per turn
 		// Significant power boost for solar-heavy builds
 		// RARE: Only 1 copy in entire Level 3 deck
-		player.hasSolarPanelEfficiency = true;
+		// Check with: player.hasCard('solar_panel_efficiency')
+		player.enhancements.push(this.toSchema());
 	}
 }

@@ -22,6 +22,7 @@ export class AllTerrainWheelsCard extends EnhancementCard {
 		// - Second-Hand Rover (5km) → 6km per turn
 		// - Cutting Edge Rover (7km) → 8.4km per turn
 		// Helps reach 100km to alien base faster
-		player.hasAllTerrainWheels = true;
+		// Check with: player.hasCard('all_terrain_wheels')
+		player.enhancements.push(this.toSchema());
 	}
 }

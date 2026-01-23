@@ -18,7 +18,7 @@ export class IntelligenceAgencyCard extends EnhancementCard {
 
 	apply(gameState: GameState, player: Player, targetPlayerId?: string): void {
 		// Ongoing effect: reveals covert cards played against this player
-		// This is managed through the player's state flag
-		player.hasIntelligenceAgency = true;
+		// Check with: player.hasCard('intelligence_agency')
+		player.enhancements.push(this.toSchema());
 	}
 }

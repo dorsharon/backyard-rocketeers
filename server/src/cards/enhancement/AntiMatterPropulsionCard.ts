@@ -20,7 +20,10 @@ export class AntiMatterPropulsionCard extends EnhancementCard {
 		// Time-limited effect: +20% fuel per turn for 5 turns
 		// Total: 100% fuel gained over 5 turns
 		// Essentially provides unlimited fuel for the Level 2 space journey
-		player.hasAntiMatterPropulsion = true;
-		player.antiMatterPropulsionTurnsRemaining = 5;
+		// Check with: player.hasCard('anti_matter_propulsion')
+		// Track turns via CardSchema or game state
+		const schema = this.toSchema();
+		schema.tier = 5; // Using tier to track turns remaining
+		player.enhancements.push(schema);
 	}
 }

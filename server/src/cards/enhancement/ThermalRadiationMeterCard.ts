@@ -19,6 +19,7 @@ export class ThermalRadiationMeterCard extends EnhancementCard {
 		// Ongoing protection: completely negates Cosmic Rays sabotage
 		// Cosmic Rays played against this player have no effect
 		// Critical for protecting fuselage from destruction
-		player.hasThermalRadiationMeter = true;
+		// Check with: player.hasCard('thermal_radiation_meter')
+		player.enhancements.push(this.toSchema());
 	}
 }

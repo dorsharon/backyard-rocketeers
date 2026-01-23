@@ -19,6 +19,7 @@ export class SolarWindCard extends EnhancementCard {
 		// Ongoing passive effect: +20% speed boost in Level 2
 		// This synergizes with Solar Sail (both together = 40% boost)
 		// Implemented through game logic that applies speed multipliers
-		player.hasSolarWind = true;
+		// Check with: player.hasCard('solar_wind')
+		player.enhancements.push(this.toSchema());
 	}
 }

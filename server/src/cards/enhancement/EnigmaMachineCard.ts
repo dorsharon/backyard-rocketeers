@@ -20,7 +20,8 @@ export class EnigmaMachineCard extends EnhancementCard {
 		// Ongoing effect: makes all rocket components appear covert
 		// This prevents opponents from seeing what components the player has
 		// Automatically discarded when entering Level 2
-		player.hasEnigmaMachine = true;
+		// Check with: player.hasCard('enigma_machine')
+		player.enhancements.push(this.toSchema());
 
 		// Make all current components covert
 		player.rocketComponents.forEach((component) => {

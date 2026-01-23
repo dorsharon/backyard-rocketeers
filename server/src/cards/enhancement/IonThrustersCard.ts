@@ -19,6 +19,7 @@ export class IonThrustersCard extends EnhancementCard {
 		// Ongoing passive effect: +3km per turn
 		// Works even with 0% fuel, providing guaranteed movement
 		// Cannot be stopped by fuel sabotage
-		player.hasIonThrusters = true;
+		// Check with: player.hasCard('ion_thrusters')
+		player.enhancements.push(this.toSchema());
 	}
 }
