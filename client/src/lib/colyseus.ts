@@ -1,7 +1,7 @@
-import { Client, Room } from "colyseus.js";
+import { Client, Room } from 'colyseus.js';
 
 // Colyseus client configuration
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || "ws://localhost:2567";
+const SERVER_URL = (import.meta as any).env?.VITE_SERVER_URL || 'ws://localhost:2567';
 
 let client: Client | null = null;
 
@@ -23,15 +23,15 @@ export function getColyseusClient(): Client {
  * @param options Join options (e.g., player name)
  */
 export async function joinGameRoom(roomName: string, options: any = {}): Promise<Room> {
-  const client = getColyseusClient();
+  const colyseusClient = getColyseusClient();
 
   try {
     // Try to join an existing room
-    const room = await client.joinOrCreate(roomName, options);
-    console.log(`Joined room: ${room.id}`);
+    const room = await colyseusClient.joinOrCreate(roomName, options);
+    console.log(`Joined room: ${room.roomId}`);
     return room;
   } catch (error) {
-    console.error("Failed to join room:", error);
+    console.error('Failed to join room:', error);
     throw error;
   }
 }
@@ -42,8 +42,8 @@ export async function joinGameRoom(roomName: string, options: any = {}): Promise
 export async function leaveGameRoom(room: Room): Promise<void> {
   try {
     await room.leave();
-    console.log("Left room");
+    console.log('Left room');
   } catch (error) {
-    console.error("Error leaving room:", error);
+    console.error('Error leaving room:', error);
   }
 }
