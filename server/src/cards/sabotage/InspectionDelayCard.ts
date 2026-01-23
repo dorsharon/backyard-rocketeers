@@ -1,6 +1,6 @@
-import { SabotageCard } from "../SabotageCard";
-import { GameState } from "../../schemas/GameState";
-import { Player } from "../../schemas/Player";
+import type { GameState } from '../../schemas/GameState';
+import type { Player } from '../../schemas/Player';
+import { SabotageCard } from '../SabotageCard';
 
 /**
  * Inspection Delay - Target player cannot place or replace any components during their next turn.
@@ -9,19 +9,20 @@ import { Player } from "../../schemas/Player";
  * See CARDS_CATALOG.md - "Inspection Delay"
  */
 export class InspectionDelayCard extends SabotageCard {
-  readonly id = "inspection_delay";
-  readonly name = "Inspection Delay";
-  readonly description = "Red tape strikes again! Nothing like good old bureaucracy to slow things down.";
-  readonly availableAtLevels = [1];
-  readonly isCovert = false;
+	readonly id = 'inspection_delay';
+	readonly name = 'Inspection Delay';
+	readonly description =
+		'Red tape strikes again! Nothing like good old bureaucracy to slow things down.';
+	readonly availableAtLevels = [1];
+	readonly isCovert = false;
 
-  apply(gameState: GameState, player: Player, targetPlayerId?: string): void {
-    if (!targetPlayerId) return;
+	apply(gameState: GameState, player: Player, targetPlayerId?: string): void {
+		if (!targetPlayerId) return;
 
-    const target = gameState.players.get(targetPlayerId);
-    if (!target) return;
+		const target = gameState.players.get(targetPlayerId);
+		if (!target) return;
 
-    // TODO: Add status effect to prevent component placement next turn
-    // Would need game state to track status effects
-  }
+		// TODO: Add status effect to prevent component placement next turn
+		// Would need game state to track status effects
+	}
 }

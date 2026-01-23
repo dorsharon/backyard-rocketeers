@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Improvised Mars Rover - Basic surface exploration vehicle.
@@ -9,11 +9,11 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Improvised Mars Rover"
  */
 export class ImprovisedMarsRoverCard extends ComponentCard {
-  readonly id = "E6GlxvSs6bgiinERVlUsK";
-  readonly name = "Improvised Mars Rover";
-  readonly componentType = "rover" as const;
-  readonly description = "It will get there, have faith!";
-  readonly availableAtLevels = [3];
-  readonly isCovert = false;
-  readonly strength = 3; // 3km/turn
+	readonly id = 'E6GlxvSs6bgiinERVlUsK';
+	readonly name = 'Improvised Mars Rover';
+	readonly componentType = 'rover' as const;
+	readonly description = 'It will get there, have faith!';
+	readonly availableAtLevels = [3];
+	readonly isCovert = false;
+	readonly strength = 3; // 3km/turn
 }

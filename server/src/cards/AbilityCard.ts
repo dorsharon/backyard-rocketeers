@@ -1,5 +1,5 @@
-import { Card } from "./Card";
-import { CardSchema } from "../schemas/CardSchema";
+import { CardSchema } from '../schemas/CardSchema';
+import { Card } from './Card';
 
 /**
  * Base class for all ability cards.
@@ -8,16 +8,16 @@ import { CardSchema } from "../schemas/CardSchema";
  * See GAME_RULES.md - "Ability Cards" section.
  */
 export abstract class AbilityCard extends Card {
-  readonly type = "ability" as const;
+	readonly type = 'ability' as const;
 
-  toSchema(): CardSchema {
-    return new CardSchema(
-      this.generateInstanceId(),
-      this.name,
-      this.type,
-      this.description,
-      this.isCovert,
-      0,
-    );
-  }
+	toSchema(): CardSchema {
+		return new CardSchema(
+			this.generateInstanceId(),
+			this.name,
+			this.type,
+			this.description,
+			this.isCovert,
+			0,
+		);
+	}
 }

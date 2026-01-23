@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Improvised Solar Panels - Basic solar power generation.
@@ -9,11 +9,11 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Improvised Solar Panels"
  */
 export class ImprovisedSolarPanelsCard extends ComponentCard {
-  readonly id = "3Jeb0Kk6tUuTI_5alrUgj";
-  readonly name = "Improvised Solar Panels";
-  readonly componentType = "generator" as const;
-  readonly description = "For what it's worth, it's powering our toaster...";
-  readonly availableAtLevels = [3];
-  readonly isCovert = false;
-  readonly strength = 10; // 10% power/turn
+	readonly id = '3Jeb0Kk6tUuTI_5alrUgj';
+	readonly name = 'Improvised Solar Panels';
+	readonly componentType = 'generator' as const;
+	readonly description = "For what it's worth, it's powering our toaster...";
+	readonly availableAtLevels = [3];
+	readonly isCovert = false;
+	readonly strength = 10; // 10% power/turn
 }

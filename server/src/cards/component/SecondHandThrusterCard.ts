@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Second-hand Thruster - Reliable propulsion engine.
@@ -10,11 +10,11 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Second-hand Thruster"
  */
 export class SecondHandThrusterCard extends ComponentCard {
-  readonly id = "Nm6Z3rhXnCiAZeG3miae2";
-  readonly name = "Second-hand Thruster";
-  readonly componentType = "thruster" as const;
-  readonly description = "There's nothing that some duct tape can't fix.";
-  readonly availableAtLevels = [1];
-  readonly isCovert = false;
-  readonly strength = 2;
+	readonly id = 'Nm6Z3rhXnCiAZeG3miae2';
+	readonly name = 'Second-hand Thruster';
+	readonly componentType = 'thruster' as const;
+	readonly description = "There's nothing that some duct tape can't fix.";
+	readonly availableAtLevels = [1];
+	readonly isCovert = false;
+	readonly strength = 2;
 }

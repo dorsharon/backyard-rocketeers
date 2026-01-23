@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Anti-Missiles System - Covert defense against missile attacks.
@@ -11,11 +11,11 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Anti-Missiles System"
  */
 export class AntiMissilesSystemCard extends ComponentCard {
-  readonly id = "hfYtOcqjwhXwyn_YRPssZ";
-  readonly name = "Anti-Missiles System";
-  readonly componentType = "defense" as const;
-  readonly description = "Do a barrel roll!";
-  readonly availableAtLevels = [1];
-  readonly isCovert = true;
-  readonly strength = 2;
+	readonly id = 'hfYtOcqjwhXwyn_YRPssZ';
+	readonly name = 'Anti-Missiles System';
+	readonly componentType = 'defense' as const;
+	readonly description = 'Do a barrel roll!';
+	readonly availableAtLevels = [1];
+	readonly isCovert = true;
+	readonly strength = 2;
 }

@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Launch Pad - Required foundation for building rocket.
@@ -8,11 +8,11 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Launch Pad"
  */
 export class LaunchPadCard extends ComponentCard {
-  readonly id = "cpwgGUMh2RBCBA9BSXCr7";
-  readonly name = "Launch Pad";
-  readonly componentType = "launch_pad" as const;
-  readonly description = "It's elemantry, Watson, my friend";
-  readonly availableAtLevels = [1];
-  readonly isCovert = false;
-  readonly strength = 0;
+	readonly id = 'cpwgGUMh2RBCBA9BSXCr7';
+	readonly name = 'Launch Pad';
+	readonly componentType = 'launch_pad' as const;
+	readonly description = "It's elemantry, Watson, my friend";
+	readonly availableAtLevels = [1];
+	readonly isCovert = false;
+	readonly strength = 0;
 }

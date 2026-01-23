@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Solid Rocket Boosters - Shuttle-era boosters.
@@ -10,11 +10,12 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Solid Rocket Boosters"
  */
 export class SolidRocketBoostersCard extends ComponentCard {
-  readonly id = "mmWd2byuit5tfPoEVK4mn";
-  readonly name = "Solid Rocket Boosters";
-  readonly componentType = "boosters" as const;
-  readonly description = "They worked during the Shuttle era, so what could go wrong?";
-  readonly availableAtLevels = [1];
-  readonly isCovert = false;
-  readonly strength = 2;
+	readonly id = 'mmWd2byuit5tfPoEVK4mn';
+	readonly name = 'Solid Rocket Boosters';
+	readonly componentType = 'boosters' as const;
+	readonly description =
+		'They worked during the Shuttle era, so what could go wrong?';
+	readonly availableAtLevels = [1];
+	readonly isCovert = false;
+	readonly strength = 2;
 }

@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Improvised Stabilizer Fins - Basic stability control.
@@ -10,11 +10,12 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Improvised Stabilizer Fins"
  */
 export class ImprovisedStabilizerFinsCard extends ComponentCard {
-  readonly id = "ftpIFozuUY07p1w3ocCvb";
-  readonly name = "Improvised Stabilizer Fins";
-  readonly componentType = "stabilizer_fins" as const;
-  readonly description = "These will probably help you stabilize... hopefully...";
-  readonly availableAtLevels = [1];
-  readonly isCovert = false;
-  readonly strength = 1;
+	readonly id = 'ftpIFozuUY07p1w3ocCvb';
+	readonly name = 'Improvised Stabilizer Fins';
+	readonly componentType = 'stabilizer_fins' as const;
+	readonly description =
+		'These will probably help you stabilize... hopefully...';
+	readonly availableAtLevels = [1];
+	readonly isCovert = false;
+	readonly strength = 1;
 }

@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Windmill Generator - Wind-powered electricity generation.
@@ -9,11 +9,11 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Windmill Generator"
  */
 export class WindmillGeneratorCard extends ComponentCard {
-  readonly id = "YF2httefcNRT1x7G8n8lS";
-  readonly name = "Windmill Generator";
-  readonly componentType = "generator" as const;
-  readonly description = "The weatherman is always wrong, I tell ya!";
-  readonly availableAtLevels = [3];
-  readonly isCovert = false;
-  readonly strength = 10; // 10% power/turn
+	readonly id = 'YF2httefcNRT1x7G8n8lS';
+	readonly name = 'Windmill Generator';
+	readonly componentType = 'generator' as const;
+	readonly description = 'The weatherman is always wrong, I tell ya!';
+	readonly availableAtLevels = [3];
+	readonly isCovert = false;
+	readonly strength = 10; // 10% power/turn
 }

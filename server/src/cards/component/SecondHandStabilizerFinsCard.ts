@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Second-hand Stabilizer Fins - Reliable stability control.
@@ -10,11 +10,12 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Second-Hand Stabilizer Fins"
  */
 export class SecondHandStabilizerFinsCard extends ComponentCard {
-  readonly id = "wLmztFFGwd6Y92ZeTD9RN";
-  readonly name = "Second-hand Stabilizer Fins";
-  readonly componentType = "stabilizer_fins" as const;
-  readonly description = "They worked for the last guy that used them, so maybe they're fine.";
-  readonly availableAtLevels = [1];
-  readonly isCovert = false;
-  readonly strength = 2;
+	readonly id = 'wLmztFFGwd6Y92ZeTD9RN';
+	readonly name = 'Second-hand Stabilizer Fins';
+	readonly componentType = 'stabilizer_fins' as const;
+	readonly description =
+		"They worked for the last guy that used them, so maybe they're fine.";
+	readonly availableAtLevels = [1];
+	readonly isCovert = false;
+	readonly strength = 2;
 }

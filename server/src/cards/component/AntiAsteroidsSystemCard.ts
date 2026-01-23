@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Anti-Astroids System - Covert defense against asteroid attacks.
@@ -11,11 +11,11 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Anti-Astroids System"
  */
 export class AntiAsteroidsSystemCard extends ComponentCard {
-  readonly id = "PmEnP8hTtZn4xR2bIVlEC";
-  readonly name = "Anti-Astroids System";
-  readonly componentType = "defense" as const;
-  readonly description = "Those astroids don't stand a chance.";
-  readonly availableAtLevels = [1];
-  readonly isCovert = true;
-  readonly strength = 2;
+	readonly id = 'PmEnP8hTtZn4xR2bIVlEC';
+	readonly name = 'Anti-Astroids System';
+	readonly componentType = 'defense' as const;
+	readonly description = "Those astroids don't stand a chance.";
+	readonly availableAtLevels = [1];
+	readonly isCovert = true;
+	readonly strength = 2;
 }

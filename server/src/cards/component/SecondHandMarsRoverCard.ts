@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Second-Hand Mars Rover - Reliable surface exploration vehicle.
@@ -9,11 +9,11 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Second-Hand Mars Rover"
  */
 export class SecondHandMarsRoverCard extends ComponentCard {
-  readonly id = "PnTxE7npcftQhdz8lyEkC";
-  readonly name = "Second-Hand Mars Rover";
-  readonly componentType = "rover" as const;
-  readonly description = "Hey, it was already there once!";
-  readonly availableAtLevels = [3];
-  readonly isCovert = false;
-  readonly strength = 5; // 5km/turn
+	readonly id = 'PnTxE7npcftQhdz8lyEkC';
+	readonly name = 'Second-Hand Mars Rover';
+	readonly componentType = 'rover' as const;
+	readonly description = 'Hey, it was already there once!';
+	readonly availableAtLevels = [3];
+	readonly isCovert = false;
+	readonly strength = 5; // 5km/turn
 }

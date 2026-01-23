@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Satellite Dish - Advanced signal transmission device.
@@ -9,11 +9,12 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Satellite Dish"
  */
 export class SatelliteDishCard extends ComponentCard {
-  readonly id = "satellite_dish";
-  readonly name = "Satellite Dish";
-  readonly componentType = "antenna" as const;
-  readonly description = "Now we're talking! Finally, something that looks like it belongs on a space mission.";
-  readonly availableAtLevels = [3];
-  readonly isCovert = false;
-  readonly strength = 2; // +2 signal
+	readonly id = 'satellite_dish';
+	readonly name = 'Satellite Dish';
+	readonly componentType = 'antenna' as const;
+	readonly description =
+		"Now we're talking! Finally, something that looks like it belongs on a space mission.";
+	readonly availableAtLevels = [3];
+	readonly isCovert = false;
+	readonly strength = 2; // +2 signal
 }

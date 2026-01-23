@@ -1,4 +1,4 @@
-import { ComponentCard } from "../ComponentCard";
+import { ComponentCard } from '../ComponentCard';
 
 /**
  * Second-Hand Nose Cone - Dented but functional.
@@ -10,11 +10,12 @@ import { ComponentCard } from "../ComponentCard";
  * See CARDS_CATALOG.md - "Second-Hand Nose Cone"
  */
 export class SecondHandNoseConeCard extends ComponentCard {
-  readonly id = "SfiDm_EYgy9fgdqs7078o";
-  readonly name = "Second-Hand Nose Cone";
-  readonly componentType = "nose_cone" as const;
-  readonly description = "So it has a few dents on it, so what? It is still pointing straight...";
-  readonly availableAtLevels = [1];
-  readonly isCovert = false;
-  readonly strength = 2;
+	readonly id = 'SfiDm_EYgy9fgdqs7078o';
+	readonly name = 'Second-Hand Nose Cone';
+	readonly componentType = 'nose_cone' as const;
+	readonly description =
+		'So it has a few dents on it, so what? It is still pointing straight...';
+	readonly availableAtLevels = [1];
+	readonly isCovert = false;
+	readonly strength = 2;
 }
