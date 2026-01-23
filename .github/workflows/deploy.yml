@@ -158,7 +158,7 @@ jobs:
     needs: [backend-lint, backend-test, backend-build]
     steps:
       - name: Deploy to Render
-        uses: johnbeynon/render-deploy-action@v1.0.6
+        uses: dmstoykov/render-deploy-action@1.0.6
         with:
           service-id: ${{ secrets.RENDER_SERVICE_ID }}
           api-key: ${{ secrets.RENDER_API_KEY }}
