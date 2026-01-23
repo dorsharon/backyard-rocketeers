@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "tsx watch src/index.ts",
+    "start:prod": "node build/index.js",
     "build": "rm -rf build && tsc",
     "lint": "biome check ."
   },
