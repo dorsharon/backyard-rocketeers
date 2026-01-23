@@ -12,11 +12,8 @@
     "build": "npm run clean && tsc",
     "clean": "rimraf build",
     "test": "mocha -r tsx test/**_test.ts --exit --timeout 15000",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "format": "biome format --write ."
+    "lint": "biome check ."
   },
-  "author": "",
   "dependencies": {
     "@colyseus/monitor": "^0.16.7",
     "@colyseus/playground": "^0.16.4",
