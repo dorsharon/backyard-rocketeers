@@ -1,31 +1,30 @@
 {
-	"name": "backyard-rocketeers-server",
-	"version": "1.0.0",
-	"description": "npm init template for bootstrapping an empty Colyseus project",
-	"main": "build/index.js",
-	"engines": {
-		"node": ">= 20.9.0"
-	},
-	"scripts": {
-		"start": "tsx watch src/index.ts",
-		"build": "npm run clean && tsc",
-		"clean": "rimraf build",
-		"lint": "biome check ."
-	},
-	"dependencies": {
-		"@colyseus/monitor": "^0.16.7",
-		"@colyseus/playground": "^0.16.4",
-		"@colyseus/tools": "^0.16.18",
-		"colyseus": "^0.16.5",
-		"express": "^5.2.1"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.3.11",
-		"@colyseus/loadtest": "^0.16.2",
-		"@colyseus/testing": "^0.16.3",
-		"@types/express": "^5.0.6",
-		"rimraf": "^6.1.2",
-		"tsx": "^4.21.0",
-		"typescript": "^5.9.3"
-	}
+  "name": "backyard-rocketeers-server",
+  "version": "1.0.0",
+  "description": "npm init template for bootstrapping an empty Colyseus project",
+  "main": "build/index.js",
+  "engines": {
+    "node": ">= 20.9.0"
+  },
+  "scripts": {
+    "start": "tsx watch src/index.ts",
+    "build": "rm -rf build && tsc",
+    "lint": "biome check ."
+  },
+  "dependencies": {
+    "@colyseus/monitor": "^0.16.7",
+    "@colyseus/playground": "^0.16.4",
+    "@colyseus/tools": "^0.16.18",
+    "colyseus": "^0.16.5",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.11",
+    "@colyseus/loadtest": "^0.16.2",
+    "@colyseus/testing": "^0.16.3",
+    "@types/express": "^5.0.6",
+    "rimraf": "^6.1.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
 }
