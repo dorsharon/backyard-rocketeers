@@ -3,7 +3,7 @@ import { CardRegistry } from '../cards/CardRegistry';
 import type { CardSchema } from '../schemas/CardSchema';
 import { GameState } from '../schemas/GameState';
 import { Player } from '../schemas/Player';
-import { roll1d6, rollDice, sumDice } from '../utils/dice';
+import { roll1d6, rollDice, shuffleArray, sumDice } from '../utils/dice';
 
 /**
  * GameRoom - Main game logic for Backyard Rocketeers.
@@ -16,7 +16,7 @@ export class GameRoom extends Room<GameState> {
 	maxClients = 6;
 	minClients = 2;
 
-	onCreate(_options: any): void {
+	onCreate(_options: Record<string, unknown>): void {
 		// Initialize game state
 		this.setState(new GameState());
 
@@ -34,7 +34,7 @@ export class GameRoom extends Room<GameState> {
 		this.initializeDecks();
 	}
 
-	onJoin(client: Client, options: any): void {
+	onJoin(client: Client, options: { name?: string }): void {
 		console.log(`${client.sessionId} joined the room`);
 
 		const playerName = options.name || `Player ${this.state.players.size + 1}`;
@@ -105,30 +105,21 @@ export class GameRoom extends Room<GameState> {
 		this.state.level2Deck = CardRegistry.generateLevel2Deck();
 		this.state.level3Deck = CardRegistry.generateLevel3Deck();
 
-		// Shuffle decks
-		this.shuffleDeck(this.state.level1Deck);
-		this.shuffleDeck(this.state.level2Deck);
-		this.shuffleDeck(this.state.level3Deck);
+		// Shuffle decks using secure random
+		this.state.level1Deck = shuffleArray(this.state.level1Deck);
+		this.state.level2Deck = shuffleArray(this.state.level2Deck);
+		this.state.level3Deck = shuffleArray(this.state.level3Deck);
 
 		console.log(
 			`Initialized decks - Level 1: ${this.state.level1Deck.length} cards`,
 		);
 	}
 
-	/**
-	 * Shuffle a deck using Fisher-Yates algorithm.
-	 */
-	private shuffleDeck(deck: CardSchema[]): void {
-		for (let i = deck.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[deck[i], deck[j]] = [deck[j], deck[i]];
-		}
-	}
 
 	/**
 	 * Handle player ready signal.
 	 */
-	private handleReady(client: Client, _message: any): void {
+	private handleReady(client: Client, _message: unknown): void {
 		const player = this.state.players.get(client.sessionId);
 		if (!player) return;
 
@@ -149,7 +140,7 @@ export class GameRoom extends Room<GameState> {
 	/**
 	 * Handle game start request.
 	 */
-	private handleStartGame(client: Client, _message: any): void {
+	private handleStartGame(client: Client, _message: unknown): void {
 		// Only allow if not started and enough players
 		if (this.state.gameStarted) {
 			client.send('error', { message: 'Game already started' });
@@ -260,7 +251,10 @@ export class GameRoom extends Room<GameState> {
 			if (card) deck.push(card);
 		}
 
-		this.shuffleDeck(deck);
+		// Shuffle in place by replacing contents with shuffled array
+		const shuffled = shuffleArray(deck);
+		deck.length = 0;
+		deck.push(...shuffled);
 	}
 
 	/**
@@ -280,19 +274,29 @@ export class GameRoom extends Room<GameState> {
 	}
 
 	/**
-	 * Handle draw card request.
+	 * Validate that it's the given player's turn.
+	 * Returns the player if valid, null otherwise (and sends error to client).
 	 */
-	private handleDrawCard(client: Client, _message: any): void {
+	private validatePlayerTurn(client: Client): Player | null {
 		const player = this.state.players.get(client.sessionId);
-		if (!player) return;
+		if (!player) return null;
 
-		// Validate it's player's turn
 		if (
 			this.state.playerOrder[this.state.currentPlayerIndex] !== client.sessionId
 		) {
 			client.send('error', { message: 'Not your turn!' });
-			return;
+			return null;
 		}
+
+		return player;
+	}
+
+	/**
+	 * Handle draw card request.
+	 */
+	private handleDrawCard(client: Client, _message: unknown): void {
+		const player = this.validatePlayerTurn(client);
+		if (!player) return;
 
 		// Validate phase
 		if (this.state.currentPhase !== 'draw') {
@@ -321,17 +325,12 @@ export class GameRoom extends Room<GameState> {
 	 * Handle play card request.
 	 * Validates and executes card logic using CardRegistry.
 	 */
-	private handlePlayCard(client: Client, message: any): void {
-		const player = this.state.players.get(client.sessionId);
+	private handlePlayCard(
+		client: Client,
+		message: { cardId: string; targetPlayerId?: string; additionalData?: unknown },
+	): void {
+		const player = this.validatePlayerTurn(client);
 		if (!player) return;
-
-		// Validate it's player's turn
-		if (
-			this.state.playerOrder[this.state.currentPlayerIndex] !== client.sessionId
-		) {
-			client.send('error', { message: 'Not your turn!' });
-			return;
-		}
 
 		// Validate phase
 		if (this.state.currentPhase !== 'action') {
@@ -391,17 +390,9 @@ export class GameRoom extends Room<GameState> {
 	/**
 	 * Handle end turn request.
 	 */
-	private handleEndTurn(client: Client, _message: any): void {
-		const player = this.state.players.get(client.sessionId);
+	private handleEndTurn(client: Client, _message: unknown): void {
+		const player = this.validatePlayerTurn(client);
 		if (!player) return;
-
-		// Validate it's player's turn
-		if (
-			this.state.playerOrder[this.state.currentPlayerIndex] !== client.sessionId
-		) {
-			client.send('error', { message: 'Not your turn!' });
-			return;
-		}
 
 		// Check hand limit (7 cards max)
 		if (player.hand.length > 7) {
@@ -430,17 +421,9 @@ export class GameRoom extends Room<GameState> {
 	/**
 	 * Handle launch rocket request (Level 1 -> Level 2 transition).
 	 */
-	private handleLaunchRocket(client: Client, _message: any): void {
-		const player = this.state.players.get(client.sessionId);
+	private handleLaunchRocket(client: Client, _message: unknown): void {
+		const player = this.validatePlayerTurn(client);
 		if (!player) return;
-
-		// Validate it's player's turn
-		if (
-			this.state.playerOrder[this.state.currentPlayerIndex] !== client.sessionId
-		) {
-			client.send('error', { message: 'Not your turn!' });
-			return;
-		}
 
 		// Validate player is in Level 1
 		if (player.level !== 1) {
@@ -459,7 +442,12 @@ export class GameRoom extends Room<GameState> {
 
 		// Roll for each component
 		let launchSuccess = true;
-		const componentRolls: any[] = [];
+		const componentRolls: Array<{
+			componentName: string;
+			tier: number;
+			roll: number;
+			success: boolean;
+		}> = [];
 
 		player.rocketComponents.forEach((component: CardSchema) => {
 			// Skip non-component cards or covert cards

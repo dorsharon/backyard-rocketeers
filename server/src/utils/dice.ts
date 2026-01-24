@@ -60,3 +60,17 @@ export function rollWithDisadvantage(): number {
 export function sumDice(rolls: number[]): number {
 	return rolls.reduce((sum, roll) => sum + roll, 0);
 }
+
+/**
+ * Shuffle an array using Fisher-Yates algorithm with cryptographically secure randomness.
+ * @param array Array to shuffle
+ * @returns New shuffled array (does not mutate original)
+ */
+export function shuffleArray<T>(array: T[]): T[] {
+	const shuffled = [...array];
+	for (let i = shuffled.length - 1; i > 0; i--) {
+		const j = randomInt(0, i + 1);
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	}
+	return shuffled;
+}

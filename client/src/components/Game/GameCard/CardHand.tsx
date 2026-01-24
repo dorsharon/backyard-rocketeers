@@ -1,9 +1,30 @@
 import { ActionIcon, Box, Button, Portal } from '@mantine/core';
 import { IconCards, IconX } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GameCard } from './GameCard';
 import type { CardHandProps } from './GameCard.types';
+
+// Card layout constants
+const CARD_HAND = {
+	SM_CARD_WIDTH: 140,
+	CONTAINER_PADDING: 32,
+	MIN_VISIBLE_WIDTH: 40,
+	BASE_OVERLAP_DESKTOP: -40,
+	BASE_OVERLAP_MOBILE: -20,
+	MOBILE_BREAKPOINT: 768,
+	// Container heights
+	CONTAINER_HEIGHT_MOBILE: 230,
+	CONTAINER_HEIGHT_DESKTOP: 320,
+	// Rotation limits
+	MAX_ROTATION_MOBILE: 20,
+	MAX_ROTATION_DESKTOP: 30,
+	ROTATION_PER_CARD_MOBILE: 3,
+	ROTATION_PER_CARD_DESKTOP: 5,
+	// Y offset for arc effect
+	Y_OFFSET_MOBILE: 6,
+	Y_OFFSET_DESKTOP: 10,
+} as const;
 
 export function CardHand({
 	cards,
@@ -22,7 +43,7 @@ export function CardHand({
 	// Check viewport size
 	useEffect(() => {
 		const checkViewport = () => {
-			setIsMobile(window.innerWidth < 768);
+			setIsMobile(window.innerWidth < CARD_HAND.MOBILE_BREAKPOINT);
 			setViewportWidth(window.innerWidth);
 		};
 		checkViewport();
@@ -30,32 +51,28 @@ export function CardHand({
 		return () => window.removeEventListener('resize', checkViewport);
 	}, []);
 
-	// Calculate card overlap based on viewport width and number of cards
-	const getCardOverlap = () => {
+	// Memoize card overlap calculation
+	const cardOverlap = useMemo(() => {
 		if (isMobile) {
-			// On mobile, calculate overlap to fit all cards without scrolling
-			const cardWidth = 140; // sm size width
-			const availableWidth = viewportWidth - 32; // Account for padding
-			const totalCardsWidth = cardWidth * totalCards;
+			const availableWidth = viewportWidth - CARD_HAND.CONTAINER_PADDING;
+			const totalCardsWidth = CARD_HAND.SM_CARD_WIDTH * totalCards;
 
 			if (totalCardsWidth <= availableWidth) {
-				// Cards fit without overlap
-				return -20;
+				return CARD_HAND.BASE_OVERLAP_MOBILE;
 			}
-			// Calculate negative margin to fit all cards
 			const neededOverlap = (totalCardsWidth - availableWidth) / (totalCards - 1 || 1);
-			return -Math.min(neededOverlap + 20, cardWidth - 40); // Don't overlap more than showing 40px of each card
+			const maxOverlap = CARD_HAND.SM_CARD_WIDTH - CARD_HAND.MIN_VISIBLE_WIDTH;
+			return -Math.min(neededOverlap + 20, maxOverlap);
 		}
-		// Desktop overlap
-		return -40;
-	};
+		return CARD_HAND.BASE_OVERLAP_DESKTOP;
+	}, [isMobile, viewportWidth, totalCards]);
 
-	const cardOverlap = getCardOverlap();
-
-	// Calculate rotation spread based on viewport
-	const maxRotation = isMobile
-		? Math.min(totalCards * 3, 20) // Subtler rotation on mobile
-		: Math.min(totalCards * 5, 30);
+	// Memoize rotation spread calculation
+	const maxRotation = useMemo(() => {
+		return isMobile
+			? Math.min(totalCards * CARD_HAND.ROTATION_PER_CARD_MOBILE, CARD_HAND.MAX_ROTATION_MOBILE)
+			: Math.min(totalCards * CARD_HAND.ROTATION_PER_CARD_DESKTOP, CARD_HAND.MAX_ROTATION_DESKTOP);
+	}, [isMobile, totalCards]);
 
 	const zoomedCard = zoomedCardId
 		? cards.find((c) => c.id === zoomedCardId)
@@ -74,7 +91,10 @@ export function CardHand({
 	};
 
 	const cardSize = isMobile ? 'sm' : 'md';
-	const containerHeight = isMobile ? 230 : 320;
+	const containerHeight = isMobile
+		? CARD_HAND.CONTAINER_HEIGHT_MOBILE
+		: CARD_HAND.CONTAINER_HEIGHT_DESKTOP;
+	const yOffsetMultiplier = isMobile ? CARD_HAND.Y_OFFSET_MOBILE : CARD_HAND.Y_OFFSET_DESKTOP;
 
 	return (
 		<>
@@ -103,7 +123,7 @@ export function CardHand({
 						const centerOffset = index - (totalCards - 1) / 2;
 						const rotation =
 							(centerOffset / Math.max(totalCards - 1, 1)) * maxRotation;
-						const yOffset = Math.abs(centerOffset) * (isMobile ? 6 : 10);
+						const yOffset = Math.abs(centerOffset) * yOffsetMultiplier;
 						const isSelected = card.id === selectedCardId;
 						const isHovered = card.id === hoveredCardId;
 

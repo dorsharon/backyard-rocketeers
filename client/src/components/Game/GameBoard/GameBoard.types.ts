@@ -1,7 +1,11 @@
+import type { CardData, GameStateData } from '../../../types/game';
+
+export type { CardData, GameStateData };
+
 export interface GameBoardProps {
-	gameState: any;
+	gameState: GameStateData | null;
 	playerId: string | null;
-	onSendMessage: (type: string, data?: any) => void;
+	onSendMessage: (type: string, data?: Record<string, unknown>) => void;
 	error?: string | null;
 	onClearError?: () => void;
 	pendingAction?: string | null;
@@ -12,10 +16,10 @@ export interface PlayerData {
 	name: string;
 	level: number;
 	isReady: boolean;
-	hand?: any[];
-	groundFuel?: number;
-	hasLaunchPad?: boolean;
-	rocketComponents?: any[];
+	hand: CardData[];
+	groundFuel: number;
+	hasLaunchPad: boolean;
+	rocketComponents: CardData[];
 }
 
 export interface LaunchSequenceState {

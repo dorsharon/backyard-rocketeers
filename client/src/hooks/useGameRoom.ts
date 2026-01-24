@@ -1,40 +1,42 @@
 import type { Room } from 'colyseus.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { joinGameRoom, leaveGameRoom } from '../lib/colyseus';
-
-interface GameMessage {
-  type: string;
-  data: any;
-  timestamp: number;
-}
+import type {
+  CardsDrawnMessage,
+  CardPlayedMessage,
+  DiceRollMessage,
+  ErrorMessage,
+  GameEndedMessage,
+  GameMessage,
+  GameStartedMessage,
+  GameStateData,
+  PhaseChangeMessage,
+  PlayerJoinedMessage,
+  PlayerLeftMessage,
+  TurnEndedMessage,
+  WelcomeMessage,
+} from '../types/game';
 
 /**
  * Deep clone a Colyseus state object to a plain JavaScript object.
  * This ensures React detects state changes properly since Colyseus uses proxies.
+ * Colyseus Schema objects have a toJSON() method that handles the conversion.
  */
-function cloneState(state: any): any {
+function cloneState(state: unknown): GameStateData | null {
   if (!state) return null;
 
-  // Handle ArraySchema and MapSchema by converting to plain arrays/objects
-  if (state.toJSON && typeof state.toJSON === 'function') {
-    return state.toJSON();
+  // Colyseus Schema objects have toJSON() which converts to plain objects
+  if (
+    typeof state === 'object' &&
+    state !== null &&
+    'toJSON' in state &&
+    typeof state.toJSON === 'function'
+  ) {
+    return state.toJSON() as GameStateData;
   }
 
-  // Handle plain objects
-  if (typeof state === 'object') {
-    if (Array.isArray(state)) {
-      return state.map(cloneState);
-    }
-    const result: any = {};
-    for (const key in state) {
-      if (Object.prototype.hasOwnProperty.call(state, key)) {
-        result[key] = cloneState(state[key]);
-      }
-    }
-    return result;
-  }
-
-  return state;
+  // Fallback: return as-is (should not happen with Colyseus state)
+  return state as GameStateData;
 }
 
 /**
@@ -43,7 +45,7 @@ function cloneState(state: any): any {
  */
 export function useGameRoom(playerName: string) {
   const [room, setRoom] = useState<Room | null>(null);
-  const [gameState, setGameState] = useState<any>(null);
+  const [gameState, setGameState] = useState<GameStateData | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [playerId, setPlayerId] = useState<string | null>(null);
@@ -67,14 +69,14 @@ export function useGameRoom(playerName: string) {
         listenersSetUp.current = true;
 
         // Listen for welcome message to get player ID
-        newRoom.onMessage('welcome', (message: any) => {
+        newRoom.onMessage('welcome', (message: WelcomeMessage) => {
           console.log('[Game] Welcome:', message.message);
           setPlayerId(message.playerId);
           setLastMessage({ type: 'welcome', data: message, timestamp: Date.now() });
         });
 
         // Listen for error messages from server
-        newRoom.onMessage('error', (message: any) => {
+        newRoom.onMessage('error', (message: ErrorMessage) => {
           console.error('[Game] Server error:', message);
           setError(message.message || 'An error occurred');
           setLastMessage({ type: 'error', data: message, timestamp: Date.now() });
@@ -82,67 +84,67 @@ export function useGameRoom(playerName: string) {
         });
 
         // Listen for player ready
-        newRoom.onMessage('player_ready', (message: any) => {
+        newRoom.onMessage('player_ready', (message: { playerId: string }) => {
           console.log('[Game] Player ready:', message);
           setLastMessage({ type: 'player_ready', data: message, timestamp: Date.now() });
         });
 
         // Listen for all players ready
-        newRoom.onMessage('all_players_ready', (message: any) => {
+        newRoom.onMessage('all_players_ready', (message: Record<string, never>) => {
           console.log('[Game] All players ready!', message);
           setLastMessage({ type: 'all_players_ready', data: message, timestamp: Date.now() });
         });
 
         // Listen for game started
-        newRoom.onMessage('game_started', (message: any) => {
+        newRoom.onMessage('game_started', (message: GameStartedMessage) => {
           console.log('[Game] Game started:', message);
           setLastMessage({ type: 'game_started', data: message, timestamp: Date.now() });
         });
 
         // Listen for player joined
-        newRoom.onMessage('player_joined', (message: any) => {
+        newRoom.onMessage('player_joined', (message: PlayerJoinedMessage) => {
           console.log('[Game] Player joined:', message);
           setLastMessage({ type: 'player_joined', data: message, timestamp: Date.now() });
         });
 
         // Listen for player left
-        newRoom.onMessage('player_left', (message: any) => {
+        newRoom.onMessage('player_left', (message: PlayerLeftMessage) => {
           console.log('[Game] Player left:', message);
           setLastMessage({ type: 'player_left', data: message, timestamp: Date.now() });
         });
 
         // Listen for cards drawn
-        newRoom.onMessage('cards_drawn', (message: any) => {
+        newRoom.onMessage('cards_drawn', (message: CardsDrawnMessage) => {
           console.log('[Game] Cards drawn:', message);
           setLastMessage({ type: 'cards_drawn', data: message, timestamp: Date.now() });
         });
 
         // Listen for card played
-        newRoom.onMessage('card_played', (message: any) => {
+        newRoom.onMessage('card_played', (message: CardPlayedMessage) => {
           console.log('[Game] Card played:', message);
           setLastMessage({ type: 'card_played', data: message, timestamp: Date.now() });
         });
 
         // Listen for turn ended
-        newRoom.onMessage('turn_ended', (message: any) => {
+        newRoom.onMessage('turn_ended', (message: TurnEndedMessage) => {
           console.log('[Game] Turn ended:', message);
           setLastMessage({ type: 'turn_ended', data: message, timestamp: Date.now() });
         });
 
         // Listen for phase change
-        newRoom.onMessage('phase_change', (message: any) => {
+        newRoom.onMessage('phase_change', (message: PhaseChangeMessage) => {
           console.log('[Game] Phase changed:', message);
           setLastMessage({ type: 'phase_change', data: message, timestamp: Date.now() });
         });
 
         // Listen for dice rolls
-        newRoom.onMessage('dice_roll', (message: any) => {
+        newRoom.onMessage('dice_roll', (message: DiceRollMessage) => {
           console.log('[Game] Dice roll:', message);
           setLastMessage({ type: 'dice_roll', data: message, timestamp: Date.now() });
         });
 
         // Listen for game ended
-        newRoom.onMessage('game_ended', (message: any) => {
+        newRoom.onMessage('game_ended', (message: GameEndedMessage) => {
           console.log('[Game] Game ended:', message);
           setLastMessage({ type: 'game_ended', data: message, timestamp: Date.now() });
         });
@@ -150,7 +152,7 @@ export function useGameRoom(playerName: string) {
         // Listen for state changes
         // We clone the state to ensure React detects changes properly
         // since Colyseus uses proxies that React may not track correctly
-        newRoom.onStateChange((state: any) => {
+        newRoom.onStateChange((state: unknown) => {
           console.log('[Game] State changed');
           const clonedState = cloneState(state);
           setGameState(clonedState);
@@ -176,9 +178,10 @@ export function useGameRoom(playerName: string) {
           }
         });
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('[Game] Failed to connect:', err);
-      setError(err.message || 'Failed to connect to server');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to connect to server';
+      setError(errorMessage);
       setIsConnected(false);
     }
   }, [playerName]);
@@ -198,7 +201,7 @@ export function useGameRoom(playerName: string) {
 
   // Send message to room with pending action tracking
   const sendMessage = useCallback(
-    (type: string, data: any = {}) => {
+    (type: string, data: Record<string, unknown> = {}) => {
       if (room) {
         // Prevent duplicate actions while one is pending
         if (pendingAction === type) {

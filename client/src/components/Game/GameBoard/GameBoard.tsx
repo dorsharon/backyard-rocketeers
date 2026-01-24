@@ -18,7 +18,8 @@ import { useEffect, useState } from 'react';
 import { CardHand } from '../GameCard/CardHand';
 import { LaunchSequence } from '../LaunchSequence/LaunchSequence';
 import { RocketBuilder } from '../RocketBuilder/RocketBuilder';
-import type { GameBoardProps, LaunchSequenceState, PlayerData } from './GameBoard.types';
+import type { GamePhase } from '../../../types/game';
+import type { GameBoardProps, GameStateData, LaunchSequenceState, PlayerData } from './GameBoard.types';
 import { GameStatusHeader } from './GameStatusHeader';
 import { PlayerCard } from './PlayerCard';
 import { PreGameLobby } from './PreGameLobby';
@@ -65,21 +66,26 @@ export function GameBoard({
 	}, [localError]);
 
 	// gameState.players is a plain object after toJSON() conversion, not a Map
-	const players: PlayerData[] = gameState?.players ? Object.values(gameState.players) : [];
+	const players: PlayerData[] = gameState?.players
+		? Object.values(gameState.players)
+		: [];
 
 	// Check for launch sequence data in game state
 	// This must be before any early returns to maintain hook order
 	useEffect(() => {
-		if (gameState?.launchSequence && gameState.launchSequence.isActive) {
+		const launch = gameState?.launchSequence;
+		if (launch?.isActive) {
 			const launchingPlayer = players.find(
-				(p) => p.sessionId === gameState.launchSequence.playerId,
+				(p) => p.sessionId === launch.playerId,
 			);
+			// Convert roll results to just the roll numbers for the LaunchSequence component
+			const rollNumbers = (launch.rollResults || []).map((r) => r.roll);
 			setLaunchSequence({
 				isVisible: true,
 				playerName: launchingPlayer?.name || 'Unknown',
-				rollResults: gameState.launchSequence.rollResults || [],
-				launchSuccess: gameState.launchSequence.success || false,
-				failureReason: gameState.launchSequence.failureReason,
+				rollResults: rollNumbers,
+				launchSuccess: launch.success || false,
+				failureReason: launch.failureReason,
 			});
 		}
 	}, [gameState?.launchSequence, players]);
@@ -108,7 +114,7 @@ export function GameBoard({
 	const isMyTurn = currentTurnPlayerId === playerId;
 
 	// Wrapper for sending messages with error handling
-	const handleSendMessage = (type: string, data?: any) => {
+	const handleSendMessage = (type: string, data?: Record<string, unknown>) => {
 		setLocalError(null);
 		if (onClearError) onClearError();
 		onSendMessage(type, data);
@@ -155,12 +161,12 @@ export function GameBoard({
 	const canLaunch =
 		(currentPlayer?.hasLaunchPad || false) &&
 		(currentPlayer?.groundFuel || 0) >= 100 &&
-		(currentPlayer?.rocketComponents || []).some((c: any) => c.name?.includes('Fuselage')) &&
-		(currentPlayer?.rocketComponents || []).some((c: any) => c.name?.includes('Nose')) &&
+		(currentPlayer?.rocketComponents || []).some((c) => c.name?.includes('Fuselage')) &&
+		(currentPlayer?.rocketComponents || []).some((c) => c.name?.includes('Nose')) &&
 		(currentPlayer?.rocketComponents || []).some(
-			(c: any) => c.name?.includes('Fins') || c.name?.includes('Stabilizer'),
+			(c) => c.name?.includes('Fins') || c.name?.includes('Stabilizer'),
 		) &&
-		(currentPlayer?.rocketComponents || []).some((c: any) => c.name?.includes('Thruster'));
+		(currentPlayer?.rocketComponents || []).some((c) => c.name?.includes('Thruster'));
 
 	// Main game UI
 	return (
@@ -313,7 +319,7 @@ export function GameBoard({
 									)}
 								</Group>
 								<CardHand
-									cards={currentPlayer.hand.map((card: any) => ({
+									cards={currentPlayer.hand.map((card) => ({
 										id: card.id,
 										name: card.name,
 										type: card.type,
@@ -350,8 +356,8 @@ interface LayoutProps {
 	currentTurnPlayer: PlayerData | undefined;
 	canLaunch: boolean;
 	isMyTurn: boolean;
-	gameState: any;
-	handleSendMessage: (type: string, data?: any) => void;
+	gameState: GameStateData;
+	handleSendMessage: (type: string, data?: Record<string, unknown>) => void;
 	pendingAction?: string | null;
 }
 
@@ -495,9 +501,9 @@ function DesktopLayout({
 interface ActionButtonsProps {
 	isMyTurn: boolean;
 	gameEnded: boolean;
-	currentPhase: string;
+	currentPhase: GamePhase;
 	currentTurnPlayerName?: string;
-	handleSendMessage: (type: string, data?: any) => void;
+	handleSendMessage: (type: string, data?: Record<string, unknown>) => void;
 	pendingAction?: string | null;
 	isMobile: boolean;
 }
