@@ -1,6 +1,25 @@
 import { Schema, type } from '@colyseus/schema';
 
 /**
+ * Component types for rocket parts.
+ * Used for type-safe component lookups instead of string matching.
+ */
+export type ComponentType =
+	| 'launch_pad'
+	| 'fuselage'
+	| 'nose_cone'
+	| 'stabilizer_fins'
+	| 'thruster'
+	| 'boosters'
+	| 'staging'
+	| 'defense'
+	| 'fuel_tank'
+	| 'rover'
+	| 'generator'
+	| 'antenna'
+	| '';
+
+/**
  * CardSchema represents a card in a player's hand or on the board.
  * Synchronized across all clients via Colyseus.
  */
@@ -20,6 +39,9 @@ export class CardSchema extends Schema {
 	// For components: tier (0=N/A, 1=improvised, 2=second-hand, 3=cutting-edge)
 	@type('number') tier: number = 0;
 
+	// For components: specific component type for type-safe lookups
+	@type('string') componentType: ComponentType = '';
+
 	constructor(
 		id: string,
 		name: string,
@@ -29,6 +51,7 @@ export class CardSchema extends Schema {
 		isCovert: boolean = false,
 		strength: number = 0,
 		tier: number | null = null,
+		componentType: ComponentType = '',
 	) {
 		super();
 		this.id = id;
@@ -40,5 +63,6 @@ export class CardSchema extends Schema {
 		this.isRevealed = !isCovert; // Non-covert cards are always revealed
 		this.strength = strength;
 		this.tier = tier ?? 0; // Convert null to 0 for Colyseus schema
+		this.componentType = componentType;
 	}
 }

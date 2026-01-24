@@ -6,6 +6,25 @@
 export type CardType = 'component' | 'sabotage' | 'ability' | 'enhancement';
 export type GamePhase = 'draw' | 'action' | 'discard' | 'waiting';
 
+/**
+ * Component types for rocket parts.
+ * Used for type-safe component lookups instead of string matching.
+ */
+export type ComponentType =
+	| 'launch_pad'
+	| 'fuselage'
+	| 'nose_cone'
+	| 'stabilizer_fins'
+	| 'thruster'
+	| 'boosters'
+	| 'staging'
+	| 'defense'
+	| 'fuel_tank'
+	| 'rover'
+	| 'generator'
+	| 'antenna'
+	| '';
+
 export interface CardData {
 	id: string;
 	name: string;
@@ -16,6 +35,7 @@ export interface CardData {
 	isRevealed: boolean;
 	strength: number;
 	tier: number;
+	componentType?: ComponentType;
 }
 
 export interface PlayerData {

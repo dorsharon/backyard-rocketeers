@@ -157,16 +157,15 @@ export function GameBoard({
 		return <WinnerCelebration winnerName={winner?.name || 'Unknown'} />;
 	}
 
-	// Check if rocket can launch
+	// Check if rocket can launch (using componentType for type-safe lookup)
+	const components = currentPlayer?.rocketComponents || [];
 	const canLaunch =
 		(currentPlayer?.hasLaunchPad || false) &&
 		(currentPlayer?.groundFuel || 0) >= 100 &&
-		(currentPlayer?.rocketComponents || []).some((c) => c.name?.includes('Fuselage')) &&
-		(currentPlayer?.rocketComponents || []).some((c) => c.name?.includes('Nose')) &&
-		(currentPlayer?.rocketComponents || []).some(
-			(c) => c.name?.includes('Fins') || c.name?.includes('Stabilizer'),
-		) &&
-		(currentPlayer?.rocketComponents || []).some((c) => c.name?.includes('Thruster'));
+		components.some((c) => c.componentType === 'fuselage') &&
+		components.some((c) => c.componentType === 'nose_cone') &&
+		components.some((c) => c.componentType === 'stabilizer_fins') &&
+		components.some((c) => c.componentType === 'thruster');
 
 	// Main game UI
 	return (

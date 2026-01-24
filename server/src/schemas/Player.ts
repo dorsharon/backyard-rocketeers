@@ -87,18 +87,18 @@ export class Player extends Schema {
 			return false;
 		}
 
-		// Must have all 4 required components
-		const hasFuselage = this.rocketComponents.some((c) =>
-			c.name.includes('Fuselage'),
+		// Must have all 4 required components (using componentType for type-safe lookup)
+		const hasFuselage = this.rocketComponents.some(
+			(c) => c.componentType === 'fuselage',
 		);
-		const hasNoseCone = this.rocketComponents.some((c) =>
-			c.name.includes('Nose Cone'),
+		const hasNoseCone = this.rocketComponents.some(
+			(c) => c.componentType === 'nose_cone',
 		);
-		const hasFins = this.rocketComponents.some((c) =>
-			c.name.includes('Stabilizer Fins'),
+		const hasFins = this.rocketComponents.some(
+			(c) => c.componentType === 'stabilizer_fins',
 		);
-		const hasThruster = this.rocketComponents.some((c) =>
-			c.name.includes('Thruster'),
+		const hasThruster = this.rocketComponents.some(
+			(c) => c.componentType === 'thruster',
 		);
 
 		return hasFuselage && hasNoseCone && hasFins && hasThruster;

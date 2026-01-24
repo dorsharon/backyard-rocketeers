@@ -49,10 +49,10 @@ export abstract class ComponentCard extends Card {
 			return false;
 		}
 
-		// Check for duplicate component types (exception: can replace same component on same turn)
+			// Check for duplicate component types (exception: fuel tanks can stack)
 		const hasDuplicate = player.rocketComponents.some(
 			(c) =>
-				c.name.includes(this.getComponentTypeName()) &&
+				c.componentType === this.componentType &&
 				this.componentType !== 'fuel_tank',
 		);
 
@@ -127,6 +127,7 @@ export abstract class ComponentCard extends Card {
 			this.isCovert,
 			this.strength,
 			this.tier,
+			this.componentType,
 		);
 	}
 }
