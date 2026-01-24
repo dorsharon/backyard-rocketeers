@@ -11,6 +11,7 @@ import { AbilityCard } from '../AbilityCard';
 export class DragChuteCard extends AbilityCard {
 	readonly id = 'drag_chute';
 	readonly name = 'Drag Chute';
+	readonly effect = 'Increases the chance of safe landing by 30%';
 	readonly description = 'Increases the chance of safe landing by 30%';
 	readonly availableAtLevels = [3];
 	readonly isCovert = false;

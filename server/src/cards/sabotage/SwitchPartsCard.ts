@@ -11,6 +11,8 @@ import { SabotageCard } from '../SabotageCard';
 export class SwitchPartsCard extends SabotageCard {
 	readonly id = 'wKUOn2OWOI3uscAsGZ6Ls';
 	readonly name = 'Switch Parts';
+	readonly effect =
+		"Switch one of your non-covert components with another player's non-covert component of the same kind";
 	readonly description = "They probably wouldn't even notice.";
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;

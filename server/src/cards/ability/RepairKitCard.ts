@@ -11,6 +11,7 @@ import { AbilityCard } from '../AbilityCard';
 export class RepairKitCard extends AbilityCard {
 	readonly id = 'repair_kit';
 	readonly name = 'Repair Kit';
+	readonly effect = 'Fix a broken rover, returning it to working condition';
 	readonly description =
 		"Fix a broken rover (yours or another player's), returning it to working condition";
 	readonly availableAtLevels = [3];

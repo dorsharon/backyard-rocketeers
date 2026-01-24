@@ -11,6 +11,7 @@ import { EnhancementCard } from '../EnhancementCard';
 export class AntiMatterPropulsionCard extends EnhancementCard {
 	readonly id = 'anti_matter_propulsion';
 	readonly name = 'Anti-Matter Propulsion';
+	readonly effect = 'Gain 20% space fuel per turn for 5 turns (total 100%)';
 	readonly description =
 		'Gain 20% space fuel per turn for 5 turns (total 100%).';
 	readonly availableAtLevels = [2];

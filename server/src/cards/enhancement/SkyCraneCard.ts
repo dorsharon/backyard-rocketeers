@@ -11,6 +11,7 @@ import { EnhancementCard } from '../EnhancementCard';
 export class SkyCraneCard extends EnhancementCard {
 	readonly id = 'sky_crane';
 	readonly name = 'Sky Crane';
+	readonly effect = 'Gives you 100% chance of landing your spacecraft safely';
 	readonly description =
 		'Gives you 100% chance of landing your spacecraft safely.';
 	readonly availableAtLevels = [3];

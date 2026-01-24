@@ -12,6 +12,7 @@ import { EnhancementCard } from '../EnhancementCard';
 export class SpySatelliteCard extends EnhancementCard {
 	readonly id = 'spy_satellite';
 	readonly name = 'Spy Satellite';
+	readonly effect = "All your opponent's cards (except covert) are visible to you";
 	readonly description =
 		"All your opponent's cards (except covert) are visible to you.";
 	readonly availableAtLevels = [2];

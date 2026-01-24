@@ -12,6 +12,8 @@ import { AbilityCard } from '../AbilityCard';
 export class AsteroidMiningCard extends AbilityCard {
 	readonly id = 'asteroid_mining';
 	readonly name = 'Asteroid Mining';
+	readonly effect =
+		'Roll 3d6. Gain that total in km of travel distance AND 20% space fuel';
 	readonly description =
 		'Roll 3d6. Gain that total in km of travel distance AND 20% space fuel';
 	readonly availableAtLevels = [2];

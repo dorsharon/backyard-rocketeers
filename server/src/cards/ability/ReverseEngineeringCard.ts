@@ -11,6 +11,7 @@ import { AbilityCard } from '../AbilityCard';
 export class ReverseEngineeringCard extends AbilityCard {
 	readonly id = 'reverse_engineering';
 	readonly name = 'Reverse Engineering';
+	readonly effect = "Downgrade all of another player's components";
 	readonly description = "Downgrade all of another player's components";
 	readonly availableAtLevels = [1, 3];
 	readonly isCovert = false;

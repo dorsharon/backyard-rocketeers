@@ -16,7 +16,7 @@ import {
 import { IconAlertCircle, IconPlanet, IconRocket, IconStars } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
-import { GameBoard } from './components/Game/GameBoard';
+import { GameBoard } from './components/Game/GameBoard/GameBoard';
 import { useGameRoom } from './hooks/useGameRoom';
 
 // Star field background
@@ -111,7 +111,7 @@ function App() {
   const [hasJoined, setHasJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
 
-  const { gameState, isConnected, error, playerId, connect, sendMessage, clearError } =
+  const { gameState, isConnected, error, playerId, pendingAction, connect, sendMessage, clearError } =
     useGameRoom(playerName);
 
   const handleJoin = async () => {
@@ -364,6 +364,7 @@ function App() {
         onSendMessage={sendMessage}
         error={error}
         onClearError={clearError}
+        pendingAction={pendingAction}
       />
     </Box>
   );

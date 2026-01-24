@@ -13,9 +13,11 @@ export class ImprovisedStabilizerFinsCard extends ComponentCard {
 	readonly id = 'ftpIFozuUY07p1w3ocCvb';
 	readonly name = 'Improvised Stabilizer Fins';
 	readonly componentType = 'stabilizer_fins' as const;
+	readonly effect = 'Strength: 1. Roll 1d6 in Level 2: navigation error on 1-4';
 	readonly description =
 		'These will probably help you stabilize... hopefully...';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;
 	readonly strength = 1;
+	readonly tier = 1 as const;
 }

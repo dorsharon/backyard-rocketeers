@@ -11,6 +11,7 @@ import { EnhancementCard } from '../EnhancementCard';
 export class EnigmaMachineCard extends EnhancementCard {
 	readonly id = 'enigma_machine';
 	readonly name = 'Enigma Machine';
+	readonly effect = 'All your components become covert until Level 2';
 	readonly description =
 		'All your components become covert until Level 2 is reached.';
 	readonly availableAtLevels = [1];

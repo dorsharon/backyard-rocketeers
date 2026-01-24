@@ -11,6 +11,7 @@ import { SabotageCard } from '../SabotageCard';
 export class IndustrialEspionageCard extends SabotageCard {
 	readonly id = '2IfkMjKveeo6iiCa7vc4b';
 	readonly name = 'Industrial Espionage';
+	readonly effect = "Look at another player's hand for 2 turns";
 	readonly description =
 		"If you'll be a good boy, we might let you look at their browsing history too.";
 	readonly availableAtLevels = [1];

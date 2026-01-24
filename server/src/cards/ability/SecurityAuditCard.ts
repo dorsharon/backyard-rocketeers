@@ -11,6 +11,8 @@ import { AbilityCard } from '../AbilityCard';
 export class SecurityAuditCard extends AbilityCard {
 	readonly id = 'security_audit';
 	readonly name = 'Security Audit';
+	readonly effect =
+		"Choose one of target player's components and reveal if it's covert";
 	readonly description =
 		"Choose one of target player's components on their rocket and reveal if it's covert";
 	readonly availableAtLevels = [1];

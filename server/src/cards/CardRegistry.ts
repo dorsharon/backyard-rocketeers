@@ -47,8 +47,17 @@ import { ShootRPGCard } from './sabotage/ShootRPGCard';
 import { SignalJammerCard } from './sabotage/SignalJammerCard';
 import { SwitchPartsCard } from './sabotage/SwitchPartsCard';
 
-// Ability Cards - will be imported from generated files
-// Enhancement Cards - will be imported from generated files
+// Level 1 Ability Cards
+import { InsurancePolicyCard } from './ability/InsurancePolicyCard';
+import { ParallelUniverseCard } from './ability/ParallelUniverseCard';
+import { SecurityAuditCard } from './ability/SecurityAuditCard';
+import { SlingshotCard } from './ability/SlingshotCard';
+import { SupernovaCard } from './ability/SupernovaCard';
+import { XRayMachineCard } from './ability/XRayMachineCard';
+
+// Level 1 Enhancement Cards
+import { EnigmaMachineCard } from './enhancement/EnigmaMachineCard';
+import { IntelligenceAgencyCard } from './enhancement/IntelligenceAgencyCard';
 
 /**
  * CardRegistry - Creates and manages all card instances.
@@ -108,8 +117,17 @@ export class CardRegistry {
 		{ card: new InspectionDelayCard(), quantity: 2 },
 		{ card: new HostileTakeoverCard(), quantity: 2 },
 
-		// TODO: Add Level 1 Abilities (7 cards)
-		// TODO: Add Level 1 Enhancements (2 cards)
+		// Level 1 Abilities (6 cards total)
+		{ card: new InsurancePolicyCard(), quantity: 2 },
+		{ card: new ParallelUniverseCard(), quantity: 1 },
+		{ card: new SecurityAuditCard(), quantity: 2 },
+		{ card: new SlingshotCard(), quantity: 2 },
+		{ card: new SupernovaCard(), quantity: 1 },
+		{ card: new XRayMachineCard(), quantity: 2 },
+
+		// Level 1 Enhancements (2 cards total)
+		{ card: new EnigmaMachineCard(), quantity: 2 },
+		{ card: new IntelligenceAgencyCard(), quantity: 2 },
 	];
 
 	/**

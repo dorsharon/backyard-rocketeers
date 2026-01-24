@@ -11,6 +11,7 @@ import { EnhancementCard } from '../EnhancementCard';
 export class SolarWindCard extends EnhancementCard {
 	readonly id = 'solar_wind';
 	readonly name = 'Solar Wind';
+	readonly effect = 'Gain an extra 20% speed';
 	readonly description = 'Gain an extra 20% speed in Level 2.';
 	readonly availableAtLevels = [2];
 	readonly isCovert = false;

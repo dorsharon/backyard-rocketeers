@@ -14,9 +14,11 @@ export class StagingCard extends ComponentCard {
 	readonly id = 'mN3rhWGXbkIfe59ncbDAa';
 	readonly name = 'Staging';
 	readonly componentType = 'staging' as const;
+	readonly effect = 'Strength: 1. After 4 turns in Level 2, gain +15km/turn';
 	readonly description =
 		"If it crashes on anyone after we ditch it, we'll deny everything";
 	readonly availableAtLevels = [1];
 	readonly isCovert = true;
 	readonly strength = 1;
+	readonly tier = 1 as const;
 }

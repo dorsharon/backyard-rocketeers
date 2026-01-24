@@ -13,9 +13,11 @@ export class SecondHandStabilizerFinsCard extends ComponentCard {
 	readonly id = 'wLmztFFGwd6Y92ZeTD9RN';
 	readonly name = 'Second-hand Stabilizer Fins';
 	readonly componentType = 'stabilizer_fins' as const;
+	readonly effect = 'Strength: 2. Roll 1d6 in Level 2: navigation error on 1-2';
 	readonly description =
 		"They worked for the last guy that used them, so maybe they're fine.";
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;
 	readonly strength = 2;
+	readonly tier = 2 as const;
 }

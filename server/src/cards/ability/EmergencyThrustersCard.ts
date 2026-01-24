@@ -11,6 +11,7 @@ import { AbilityCard } from '../AbilityCard';
 export class EmergencyThrustersCard extends AbilityCard {
 	readonly id = 'emergency_thrusters';
 	readonly name = 'Emergency Thrusters';
+	readonly effect = 'Advance 15km immediately but lose 20% space fuel';
 	readonly description = 'Advance 15km immediately but lose 20% space fuel';
 	readonly availableAtLevels = [2];
 	readonly isCovert = false;

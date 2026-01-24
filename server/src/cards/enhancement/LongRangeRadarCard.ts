@@ -11,6 +11,7 @@ import { EnhancementCard } from '../EnhancementCard';
 export class LongRangeRadarCard extends EnhancementCard {
 	readonly id = 'long_range_radar';
 	readonly name = 'Long Range Radar';
+	readonly effect = 'Detect and avoid asteroid storms';
 	readonly description = 'Detect and avoid asteroid storms.';
 	readonly availableAtLevels = [2];
 	readonly isCovert = false;

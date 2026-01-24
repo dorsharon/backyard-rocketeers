@@ -13,6 +13,8 @@ import { AbilityCard } from '../AbilityCard';
 export class InsurancePolicyCard extends AbilityCard {
 	readonly id = 'insurance_policy';
 	readonly name = 'Insurance Policy';
+	readonly effect =
+		'If your rocket is destroyed this round, keep 2 components of your choice';
 	readonly description =
 		'Play before your rocket is destroyed. If destroyed, keep 2 components of your choice';
 	readonly availableAtLevels = [1];

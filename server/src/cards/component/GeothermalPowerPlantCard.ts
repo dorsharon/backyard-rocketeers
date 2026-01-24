@@ -13,8 +13,10 @@ export class GeothermalPowerPlantCard extends ComponentCard {
 	readonly id = 'GeeU-JoI87NiVxWTpe_-X';
 	readonly name = 'Geothermal Power Plant';
 	readonly componentType = 'generator' as const;
+	readonly effect = '50% power collection capability every turn';
 	readonly description = 'It is definitly hot down there...';
 	readonly availableAtLevels = [3];
 	readonly isCovert = false;
 	readonly strength = 50; // 50% power/turn
+	readonly tier: null = null;
 }

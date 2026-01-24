@@ -12,9 +12,11 @@ export class SatelliteDishCard extends ComponentCard {
 	readonly id = 'satellite_dish';
 	readonly name = 'Satellite Dish';
 	readonly componentType = 'antenna' as const;
+	readonly effect = 'Provides +2 Signal Strength when placed';
 	readonly description =
 		"Now we're talking! Finally, something that looks like it belongs on a space mission.";
 	readonly availableAtLevels = [3];
 	readonly isCovert = false;
 	readonly strength = 2; // +2 signal
+	readonly tier: null = null;
 }

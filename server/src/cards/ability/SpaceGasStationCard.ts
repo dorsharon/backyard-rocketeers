@@ -11,6 +11,7 @@ import { AbilityCard } from '../AbilityCard';
 export class SpaceGasStationCard extends AbilityCard {
 	readonly id = 'space_gas_station';
 	readonly name = 'Space Gas Station';
+	readonly effect = 'Refuel on the go (Add 30% fuel after launch)';
 	readonly description = 'Refuel on the go (Add 30% fuel after launch)';
 	readonly availableAtLevels = [2];
 	readonly isCovert = false;

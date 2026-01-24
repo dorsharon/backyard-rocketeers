@@ -12,9 +12,11 @@ export class SecondHandSolarPanelsCard extends ComponentCard {
 	readonly id = 'L_zrgsXaELepqVFskF9R7';
 	readonly name = 'Second-Hand Solar Panels';
 	readonly componentType = 'generator' as const;
+	readonly effect = '20% power collection capability every turn';
 	readonly description =
 		'I took them off my roof just for that, they better work!';
 	readonly availableAtLevels = [3];
 	readonly isCovert = false;
 	readonly strength = 20; // 20% power/turn
+	readonly tier = 2 as const;
 }

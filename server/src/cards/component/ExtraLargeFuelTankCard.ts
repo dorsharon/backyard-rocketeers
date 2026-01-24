@@ -10,8 +10,10 @@ export class ExtraLargeFuelTankCard extends ComponentCard {
 	readonly id = 'DzGGI1aYgBLJPlQXsfkbf';
 	readonly name = 'Extra Large Fuel Tank';
 	readonly componentType = 'fuel_tank' as const;
+	readonly effect = 'Add 50% to fuel capacity';
 	readonly description = 'Did someone say oil crisis?';
 	readonly availableAtLevels = [1, 2];
 	readonly isCovert = false;
 	readonly strength = 50; // 50% fuel
+	readonly tier: null = null;
 }

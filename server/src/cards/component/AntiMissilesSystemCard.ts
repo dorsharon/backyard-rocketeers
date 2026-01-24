@@ -14,8 +14,10 @@ export class AntiMissilesSystemCard extends ComponentCard {
 	readonly id = 'hfYtOcqjwhXwyn_YRPssZ';
 	readonly name = 'Anti-Missiles System';
 	readonly componentType = 'defense' as const;
+	readonly effect = 'Strength: 2. Immune to missile attacks';
 	readonly description = 'Do a barrel roll!';
 	readonly availableAtLevels = [1];
 	readonly isCovert = true;
 	readonly strength = 2;
+	readonly tier = 2 as const;
 }

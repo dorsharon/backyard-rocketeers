@@ -267,6 +267,52 @@ body {
   html {
     font-size: 14px;
   }
+
+  /* Mobile-friendly touch targets */
+  button {
+    min-height: 44px;
+  }
+
+  /* Better scrolling on mobile */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Hide scrollbar on mobile but keep functionality */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Card scroll container for mobile */
+.card-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  gap: 12px;
+  padding: 8px 4px;
+}
+
+.card-scroll-container::-webkit-scrollbar {
+  height: 4px;
+}
+
+.card-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(121, 80, 242, 0.3);
+  border-radius: 2px;
+}
+
+.card-scroll-item {
+  flex-shrink: 0;
+  scroll-snap-align: center;
 }
 
 /* Reduce motion for accessibility */

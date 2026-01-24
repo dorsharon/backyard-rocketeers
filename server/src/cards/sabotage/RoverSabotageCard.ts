@@ -11,6 +11,8 @@ import { SabotageCard } from '../SabotageCard';
 export class RoverSabotageCard extends SabotageCard {
 	readonly id = 'rover_sabotage';
 	readonly name = 'Rover Sabotage';
+	readonly effect =
+		"Target player's rover must immediately roll 1d6 for malfunction check: 1-3 = rover breaks down";
 	readonly description =
 		"Someone forgot to tighten the bolts! Probably Carl. It's always Carl.";
 	readonly availableAtLevels = [3];

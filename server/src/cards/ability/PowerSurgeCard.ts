@@ -11,6 +11,7 @@ import { AbilityCard } from '../AbilityCard';
 export class PowerSurgeCard extends AbilityCard {
 	readonly id = 'power_surge';
 	readonly name = 'Power Surge';
+	readonly effect = 'Gain 30% power immediately (does not require a generator)';
 	readonly description =
 		'Gain 30% power immediately (does not require a generator)';
 	readonly availableAtLevels = [3];

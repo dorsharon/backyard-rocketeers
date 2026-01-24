@@ -12,6 +12,8 @@ import { AbilityCard } from '../AbilityCard';
 export class NewtonsThirdLawCard extends AbilityCard {
 	readonly id = 'newtons_third_law';
 	readonly name = "Newton's Third Law";
+	readonly effect =
+		'Return an equal sabotage effect to the player who used it against you';
 	readonly description =
 		'Return an equal sabotage effect to the player who used it against you';
 	readonly availableAtLevels = [1, 2, 3];

@@ -14,6 +14,8 @@ import { SabotageCard } from '../SabotageCard';
 export class PlantBombCard extends SabotageCard {
 	readonly id = 'JxcNwV0pjzJDz82LnxHek';
 	readonly name = 'Plant Bomb';
+	readonly effect =
+		"Choose another player's component and destroy it at any following turn you wish";
 	readonly description = "Just don't blow up anything during lunch.";
 	readonly availableAtLevels = [1];
 	readonly isCovert = true;

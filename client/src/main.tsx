@@ -3,6 +3,7 @@ import '@mantine/core/styles.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import './styles/global.css';
 import { theme } from './theme';
 
@@ -13,7 +14,9 @@ if (rootElement) {
     <React.StrictMode>
       <ColorSchemeScript defaultColorScheme="dark" />
       <MantineProvider theme={theme} defaultColorScheme="dark">
-        <App />
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
       </MantineProvider>
     </React.StrictMode>,
   );

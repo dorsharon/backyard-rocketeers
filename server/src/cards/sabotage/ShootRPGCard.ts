@@ -11,6 +11,8 @@ import { SabotageCard } from '../SabotageCard';
 export class ShootRPGCard extends SabotageCard {
 	readonly id = 'Uff4shh3MegAoFCpxEP9P';
 	readonly name = 'Shoot An RPG';
+	readonly effect =
+		"Destroy another player's component. Roll 1d6: 5-6 destroys 2 components!";
 	readonly description = 'Hasta la vista, baby!';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;

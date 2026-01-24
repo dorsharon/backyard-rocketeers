@@ -12,6 +12,7 @@ import { SabotageCard } from '../SabotageCard';
 export class HostileTakeoverCard extends SabotageCard {
 	readonly id = 'hostile_takeover';
 	readonly name = 'Hostile Takeover';
+	readonly effect = "Steal one covert card from target player's rocket";
 	readonly description =
 		"It's not personal, it's just business. Well... maybe a little personal.";
 	readonly availableAtLevels = [1];

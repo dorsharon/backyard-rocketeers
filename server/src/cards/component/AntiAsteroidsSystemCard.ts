@@ -14,8 +14,10 @@ export class AntiAsteroidsSystemCard extends ComponentCard {
 	readonly id = 'PmEnP8hTtZn4xR2bIVlEC';
 	readonly name = 'Anti-Astroids System';
 	readonly componentType = 'defense' as const;
+	readonly effect = 'Strength: 2. Immune to asteroid attacks';
 	readonly description = "Those astroids don't stand a chance.";
 	readonly availableAtLevels = [1];
 	readonly isCovert = true;
 	readonly strength = 2;
+	readonly tier = 2 as const;
 }

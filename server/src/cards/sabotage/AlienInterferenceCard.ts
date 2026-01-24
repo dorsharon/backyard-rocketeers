@@ -11,6 +11,8 @@ import { SabotageCard } from '../SabotageCard';
 export class AlienInterferenceCard extends SabotageCard {
 	readonly id = 'alien_interference';
 	readonly name = 'Alien Interference';
+	readonly effect =
+		"Target player's rover moves in the wrong direction: lose 10km distance toward Alien Base";
 	readonly description =
 		"They're not as friendly as we thought! Maybe we should've called first.";
 	readonly availableAtLevels = [3];

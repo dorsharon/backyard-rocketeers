@@ -12,8 +12,10 @@ export class SecondHandMarsRoverCard extends ComponentCard {
 	readonly id = 'PnTxE7npcftQhdz8lyEkC';
 	readonly name = 'Second-Hand Mars Rover';
 	readonly componentType = 'rover' as const;
+	readonly effect = 'Provides 5km/turn. Roll 1d6 each turn: fails on 1-2';
 	readonly description = 'Hey, it was already there once!';
 	readonly availableAtLevels = [3];
 	readonly isCovert = false;
 	readonly strength = 5; // 5km/turn
+	readonly tier = 2 as const;
 }

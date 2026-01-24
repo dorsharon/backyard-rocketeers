@@ -10,8 +10,10 @@ export class SmallFuelTankCard extends ComponentCard {
 	readonly id = '0sP7Q0M7xaEOQeCU8ivYs';
 	readonly name = 'Small Fuel Tank';
 	readonly componentType = 'fuel_tank' as const;
+	readonly effect = 'Add 10% to fuel capacity';
 	readonly description = "It's either this, or we run on potatoes.";
 	readonly availableAtLevels = [1, 2, 3];
 	readonly isCovert = false;
 	readonly strength = 10; // 10% fuel
+	readonly tier: null = null;
 }

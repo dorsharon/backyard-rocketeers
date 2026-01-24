@@ -304,6 +304,44 @@ backyard-rocketeers/
 - Inline comments for complex game logic
 - Reference rule document sections when implementing rules
 
+### Component Organization (Frontend)
+Components should be organized following these rules:
+
+1. **Size Threshold:** Components exceeding ~200 lines should be considered for splitting into smaller, focused sub-components if it makes sense logically.
+
+2. **Folder Structure:** Each component should live in its own folder named after the component:
+   ```
+   components/
+   └── MyComponent/
+       ├── MyComponent.tsx       ← Main component implementation
+       └── MyComponent.types.ts  ← Props, types, interfaces
+   ```
+
+3. **Child Component Nesting:** Sub-components that are ONLY used by a single parent should be nested under the parent's folder:
+   ```
+   components/
+   └── GameBoard/
+       ├── GameBoard.tsx
+       ├── GameBoard.types.ts
+       ├── PlayerList/
+       │   ├── PlayerList.tsx
+       │   └── PlayerList.types.ts
+       └── TurnIndicator/
+           ├── TurnIndicator.tsx
+           └── TurnIndicator.types.ts
+   ```
+
+4. **Shared Components:** Components used by multiple parents should live at the appropriate shared level (e.g., `components/UI/` for generic UI components).
+
+5. **NO Barrel Files (index.ts):** Do NOT use barrel files / index.ts in the client. Import directly from the specific file:
+   ```typescript
+   // CORRECT - import directly from the file
+   import { GameBoard } from './components/Game/GameBoard/GameBoard';
+
+   // WRONG - don't use barrel files
+   import { GameBoard } from './components/Game/GameBoard';
+   ```
+
 ```typescript
 /**
  * Executes the Shoot RPG card effect.

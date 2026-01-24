@@ -13,8 +13,10 @@ export class CuttingEdgeNoseConeCard extends ComponentCard {
 	readonly id = 'o7WU8EH9JB6h2Yue5mXuJ';
 	readonly name = 'Cutting Edge Nose Cone';
 	readonly componentType = 'nose_cone' as const;
+	readonly effect = 'Strength: 3. Landing success bonus +20%';
 	readonly description = 'It really is a cutting edge.';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;
 	readonly strength = 3;
+	readonly tier = 3 as const;
 }

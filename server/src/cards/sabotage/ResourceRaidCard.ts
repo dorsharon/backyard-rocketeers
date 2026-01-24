@@ -11,6 +11,7 @@ import { SabotageCard } from '../SabotageCard';
 export class ResourceRaidCard extends SabotageCard {
 	readonly id = 'resource_raid';
 	readonly name = 'Resource Raid';
+	readonly effect = "Steal 1 fuel tank card from target player's hand";
 	readonly description = 'Finders keepers, losers weepers!';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;

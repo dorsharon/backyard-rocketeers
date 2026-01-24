@@ -12,6 +12,7 @@ import { Card } from './Card';
 export abstract class ComponentCard extends Card {
 	readonly type = 'component' as const;
 	abstract readonly strength: number; // 0-3
+	abstract readonly tier: 1 | 2 | 3 | null; // null=N/A, 1=improvised, 2=second-hand, 3=cutting-edge
 	abstract readonly componentType:
 		| 'launch_pad'
 		| 'fuselage'
@@ -121,9 +122,11 @@ export abstract class ComponentCard extends Card {
 			this.generateInstanceId(),
 			this.name,
 			this.type,
+			this.effect,
 			this.description,
 			this.isCovert,
 			this.strength,
+			this.tier,
 		);
 	}
 }

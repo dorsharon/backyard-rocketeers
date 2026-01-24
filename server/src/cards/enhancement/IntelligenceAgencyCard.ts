@@ -11,6 +11,8 @@ import { EnhancementCard } from '../EnhancementCard';
 export class IntelligenceAgencyCard extends EnhancementCard {
 	readonly id = 'intelligence_agency';
 	readonly name = 'Intelligence Agency';
+	readonly effect =
+		'As long as this card is in effect, you can see covert actions that are applied to you';
 	readonly description =
 		'As long as this card is in effect, you can see covert actions that are applied to you.';
 	readonly availableAtLevels = [1];

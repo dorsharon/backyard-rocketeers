@@ -11,6 +11,8 @@ import { AbilityCard } from '../AbilityCard';
 export class LaserCannonCard extends AbilityCard {
 	readonly id = 'laser_cannon';
 	readonly name = 'Laser Cannon';
+	readonly effect =
+		'Shoot and destroy an asteroid, a rival rocket or even a rover on the surface of mars!';
 	readonly description =
 		'Shoot and destroy an asteroid, a rival rocket or even a rover on the surface of mars!';
 	readonly availableAtLevels = [2, 3];

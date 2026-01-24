@@ -11,6 +11,8 @@ import { EnhancementCard } from '../EnhancementCard';
 export class SignalAmplifierCard extends EnhancementCard {
 	readonly id = 'signal_amplifier';
 	readonly name = 'Signal Amplifier';
+	readonly effect =
+		'All your communication components provide +1 additional Signal Strength';
 	readonly description =
 		'All your communication components (antennas, dishes, arrays) provide +1 additional Signal Strength.';
 	readonly availableAtLevels = [3];

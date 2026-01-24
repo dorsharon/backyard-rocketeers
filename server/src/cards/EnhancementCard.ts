@@ -15,6 +15,7 @@ export abstract class EnhancementCard extends Card {
 			this.generateInstanceId(),
 			this.name,
 			this.type,
+			this.effect,
 			this.description,
 			this.isCovert,
 			0,

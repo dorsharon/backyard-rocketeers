@@ -11,6 +11,7 @@ import { AbilityCard } from '../AbilityCard';
 export class TeleportCard extends AbilityCard {
 	readonly id = 'teleport';
 	readonly name = 'Teleport';
+	readonly effect = 'Gain 10km of travel distance';
 	readonly description = 'Gain 10km of travel distance';
 	readonly availableAtLevels = [2];
 	readonly isCovert = false;

@@ -12,6 +12,8 @@ import { AbilityCard } from '../AbilityCard';
 export class HeatShieldCard extends AbilityCard {
 	readonly id = 'heat_shield';
 	readonly name = 'Heat Shield';
+	readonly effect =
+		'Deflect a cosmic ray attack or use it to increase landing chances by 20%';
 	readonly description =
 		'Deflect a cosmic ray attack or use it to increase landing chances by 20%';
 	readonly availableAtLevels = [2, 3];

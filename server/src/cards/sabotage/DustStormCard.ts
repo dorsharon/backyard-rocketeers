@@ -11,6 +11,8 @@ import { SabotageCard } from '../SabotageCard';
 export class DustStormCard extends SabotageCard {
 	readonly id = 'GWBJ9axStwo5JqGn0o5ex';
 	readonly name = 'Dust Storm';
+	readonly effect =
+		'Block any solar panel on the surface and prevent it from producing power for 3 turns';
 	readonly description =
 		"Guys, I told you, no more beans for dinner! now look what you've done...";
 	readonly availableAtLevels = [3];

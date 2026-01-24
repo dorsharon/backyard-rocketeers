@@ -11,6 +11,8 @@ import { EnhancementCard } from '../EnhancementCard';
 export class SolarPanelEfficiencyCard extends EnhancementCard {
 	readonly id = 'solar_panel_efficiency';
 	readonly name = 'Solar Panel Efficiency';
+	readonly effect =
+		'All your solar panel components produce +5% additional power per turn';
 	readonly description =
 		'All your solar panel components produce +5% additional power per turn.';
 	readonly availableAtLevels = [3];

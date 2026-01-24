@@ -13,8 +13,10 @@ export class SecondHandFuselageCard extends ComponentCard {
 	readonly id = 'uzQdaUKLJrVTHkkH1uWHe';
 	readonly name = 'Second-hand Fuselage';
 	readonly componentType = 'fuselage' as const;
+	readonly effect = 'Strength: 2. Roll 1d6 when challenged: fails on 1';
 	readonly description = 'Hey guys, look what I found on eBay last night!';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;
 	readonly strength = 2;
+	readonly tier = 2 as const; // Second-hand
 }

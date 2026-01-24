@@ -13,7 +13,8 @@ export abstract class Card {
 	abstract readonly id: string;
 	abstract readonly name: string;
 	abstract readonly type: 'component' | 'sabotage' | 'ability' | 'enhancement';
-	abstract readonly description: string;
+	abstract readonly effect: string; // What the card does mechanically
+	abstract readonly description: string; // Flavor text
 	abstract readonly availableAtLevels: number[];
 	abstract readonly isCovert: boolean;
 

@@ -11,6 +11,7 @@ import { SabotageCard } from '../SabotageCard';
 export class SignalJammerCard extends SabotageCard {
 	readonly id = 'signal_jammer';
 	readonly name = 'Signal Jammer';
+	readonly effect = "Reduce target player's signal strength by 1 (minimum 0)";
 	readonly description = 'Can you hear me now? ...Good!';
 	readonly availableAtLevels = [3];
 	readonly isCovert = false;

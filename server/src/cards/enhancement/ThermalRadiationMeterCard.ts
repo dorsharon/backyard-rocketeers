@@ -11,6 +11,7 @@ import { EnhancementCard } from '../EnhancementCard';
 export class ThermalRadiationMeterCard extends EnhancementCard {
 	readonly id = 'thermal_radiation_meter';
 	readonly name = 'Thermal Radiation Meter';
+	readonly effect = 'Detect and avoid cosmic rays';
 	readonly description = 'Detect and avoid cosmic rays.';
 	readonly availableAtLevels = [2];
 	readonly isCovert = false;

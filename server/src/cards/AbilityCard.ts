@@ -15,6 +15,7 @@ export abstract class AbilityCard extends Card {
 			this.generateInstanceId(),
 			this.name,
 			this.type,
+			this.effect,
 			this.description,
 			this.isCovert,
 			0,

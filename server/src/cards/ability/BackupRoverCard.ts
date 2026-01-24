@@ -12,6 +12,8 @@ import { AbilityCard } from '../AbilityCard';
 export class BackupRoverCard extends AbilityCard {
 	readonly id = 'backup_rover';
 	readonly name = 'Backup Rover';
+	readonly effect =
+		'If your main rover fails or is destroyed, this rover automatically deploys and provides 4km/turn. Never fails.';
 	readonly description =
 		'If your main rover fails or is destroyed, this rover automatically deploys and provides 4km/turn. Never fails.';
 	readonly availableAtLevels = [3];

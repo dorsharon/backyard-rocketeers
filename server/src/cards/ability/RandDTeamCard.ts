@@ -11,6 +11,7 @@ import { AbilityCard } from '../AbilityCard';
 export class RandDTeamCard extends AbilityCard {
 	readonly id = 'randd_team';
 	readonly name = 'R&D Team';
+	readonly effect = 'Upgrade all your components';
 	readonly description = 'Upgrade all your components';
 	readonly availableAtLevels = [1, 3];
 	readonly isCovert = false;

@@ -11,6 +11,8 @@ import { EnhancementCard } from '../EnhancementCard';
 export class UHFTransceiverCard extends EnhancementCard {
 	readonly id = 'uhf_transceiver';
 	readonly name = 'UHF Transceiver';
+	readonly effect =
+		'This com device is not affected by a cyber attack, so you can avoid navigation errors';
 	readonly description =
 		'This com device is not affected by a cyber attack, so you can avoid navigation errors.';
 	readonly availableAtLevels = [2];

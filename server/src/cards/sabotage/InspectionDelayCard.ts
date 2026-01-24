@@ -11,6 +11,8 @@ import { SabotageCard } from '../SabotageCard';
 export class InspectionDelayCard extends SabotageCard {
 	readonly id = 'inspection_delay';
 	readonly name = 'Inspection Delay';
+	readonly effect =
+		'Target player cannot place or replace any components during their next turn';
 	readonly description =
 		'Red tape strikes again! Nothing like good old bureaucracy to slow things down.';
 	readonly availableAtLevels = [1];

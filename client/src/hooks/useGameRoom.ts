@@ -9,6 +9,35 @@ interface GameMessage {
 }
 
 /**
+ * Deep clone a Colyseus state object to a plain JavaScript object.
+ * This ensures React detects state changes properly since Colyseus uses proxies.
+ */
+function cloneState(state: any): any {
+  if (!state) return null;
+
+  // Handle ArraySchema and MapSchema by converting to plain arrays/objects
+  if (state.toJSON && typeof state.toJSON === 'function') {
+    return state.toJSON();
+  }
+
+  // Handle plain objects
+  if (typeof state === 'object') {
+    if (Array.isArray(state)) {
+      return state.map(cloneState);
+    }
+    const result: any = {};
+    for (const key in state) {
+      if (Object.prototype.hasOwnProperty.call(state, key)) {
+        result[key] = cloneState(state[key]);
+      }
+    }
+    return result;
+  }
+
+  return state;
+}
+
+/**
  * Custom hook for managing Colyseus game room connection.
  * Handles joining, state sync, and cleanup.
  */
@@ -19,6 +48,7 @@ export function useGameRoom(playerName: string) {
   const [error, setError] = useState<string | null>(null);
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [lastMessage, setLastMessage] = useState<GameMessage | null>(null);
+  const [pendingAction, setPendingAction] = useState<string | null>(null);
 
   // Track if we've set up listeners to avoid duplicates
   const listenersSetUp = useRef(false);
@@ -48,6 +78,7 @@ export function useGameRoom(playerName: string) {
           console.error('[Game] Server error:', message);
           setError(message.message || 'An error occurred');
           setLastMessage({ type: 'error', data: message, timestamp: Date.now() });
+          setPendingAction(null); // Clear pending action on error
         });
 
         // Listen for player ready
@@ -117,9 +148,14 @@ export function useGameRoom(playerName: string) {
         });
 
         // Listen for state changes
+        // We clone the state to ensure React detects changes properly
+        // since Colyseus uses proxies that React may not track correctly
         newRoom.onStateChange((state: any) => {
           console.log('[Game] State changed');
-          setGameState(state);
+          const clonedState = cloneState(state);
+          setGameState(clonedState);
+          // Clear pending action when state changes (action completed)
+          setPendingAction(null);
         });
 
         // Listen for room errors
@@ -160,18 +196,24 @@ export function useGameRoom(playerName: string) {
     }
   }, [room]);
 
-  // Send message to room
+  // Send message to room with pending action tracking
   const sendMessage = useCallback(
     (type: string, data: any = {}) => {
       if (room) {
+        // Prevent duplicate actions while one is pending
+        if (pendingAction === type) {
+          console.log('[Game] Action already pending:', type);
+          return;
+        }
         console.log('[Game] Sending message:', type, data);
+        setPendingAction(type);
         room.send(type, data);
       } else {
         console.error('[Game] Cannot send message: not connected to room');
         setError('Not connected to server');
       }
     },
-    [room],
+    [room, pendingAction],
   );
 
   // Clear error
@@ -206,6 +248,7 @@ export function useGameRoom(playerName: string) {
     error,
     playerId,
     lastMessage,
+    pendingAction,
     connect,
     disconnect,
     sendMessage,

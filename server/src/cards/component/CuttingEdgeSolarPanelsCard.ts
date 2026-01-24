@@ -12,9 +12,11 @@ export class CuttingEdgeSolarPanelsCard extends ComponentCard {
 	readonly id = '3svHsYNJOY5HPZ1fAFOty';
 	readonly name = 'Cutting Edge Solar Panels';
 	readonly componentType = 'generator' as const;
+	readonly effect = '30% power collection capability every turn';
 	readonly description =
 		"Those guys at MIT won't notice that I stole them, right?";
 	readonly availableAtLevels = [3];
 	readonly isCovert = false;
 	readonly strength = 30; // 30% power/turn
+	readonly tier = 3 as const;
 }

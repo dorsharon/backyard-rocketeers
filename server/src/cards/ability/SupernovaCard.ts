@@ -11,6 +11,7 @@ import { AbilityCard } from '../AbilityCard';
 export class SupernovaCard extends AbilityCard {
 	readonly id = 'supernova';
 	readonly name = 'Supernova';
+	readonly effect = 'Destroy all Enhancement cards from one target player';
 	readonly description = 'Destroy all Enhancement cards from one target player';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;

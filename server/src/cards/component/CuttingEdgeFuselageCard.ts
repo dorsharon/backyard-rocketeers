@@ -13,8 +13,10 @@ export class CuttingEdgeFuselageCard extends ComponentCard {
 	readonly id = 'cSP1AOcBCjJZDJVUyvrFz';
 	readonly name = 'Cutting Edge Fuselage';
 	readonly componentType = 'fuselage' as const;
+	readonly effect = 'Strength: 3. Never fails.';
 	readonly description = 'This is the dawn of a new era, baby!';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;
 	readonly strength = 3;
+	readonly tier = 3 as const; // Cutting Edge
 }

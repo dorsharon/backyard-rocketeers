@@ -11,6 +11,8 @@ import { AbilityCard } from '../AbilityCard';
 export class SignalBoosterCard extends AbilityCard {
 	readonly id = 'signal_booster';
 	readonly name = 'Signal Booster';
+	readonly effect =
+		'Gain +1 Signal Strength immediately (does not require a component slot)';
 	readonly description =
 		'Gain +1 Signal Strength immediately (does not require a component slot)';
 	readonly availableAtLevels = [3];
