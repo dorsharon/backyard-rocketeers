@@ -12,7 +12,7 @@ export class DragChuteCard extends AbilityCard {
 	readonly id = 'drag_chute';
 	readonly name = 'Drag Chute';
 	readonly effect = 'Increases the chance of safe landing by 30%';
-	readonly description = 'Increases the chance of safe landing by 30%';
+	readonly description = "Just don't run into some flying hedgehogs!";
 	readonly availableAtLevels = [3];
 	readonly isCovert = false;
 

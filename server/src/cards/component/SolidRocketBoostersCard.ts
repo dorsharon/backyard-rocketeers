@@ -13,7 +13,7 @@ export class SolidRocketBoostersCard extends ComponentCard {
 	readonly id = 'mmWd2byuit5tfPoEVK4mn';
 	readonly name = 'Solid Rocket Boosters';
 	readonly componentType = 'boosters' as const;
-	readonly effect = 'Strength: 2. +30km in Level 2';
+	readonly effect = '+30km in Level 2';
 	readonly description =
 		'They worked during the Shuttle era, so what could go wrong?';
 	readonly availableAtLevels = [1];

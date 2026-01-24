@@ -13,7 +13,7 @@ export class ImprovisedBoostersCard extends ComponentCard {
 	readonly id = 'Ey1gmj55WX96RDVRS42Hy';
 	readonly name = 'Improvised Boosters';
 	readonly componentType = 'boosters' as const;
-	readonly effect = 'Strength: 1. +10km in Level 2';
+	readonly effect = '+10km in Level 2';
 	readonly description = "Who said you can't build rockets at home?";
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;

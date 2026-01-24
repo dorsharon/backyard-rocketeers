@@ -12,7 +12,7 @@ export class XRayMachineCard extends AbilityCard {
 	readonly id = 'x_ray_machine';
 	readonly name = 'X-Ray Machine';
 	readonly effect = 'See if a bomb has been planted on your rocket';
-	readonly description = 'See if a bomb has been planted on your rocket';
+	readonly description = 'I have nothing to hide';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;
 

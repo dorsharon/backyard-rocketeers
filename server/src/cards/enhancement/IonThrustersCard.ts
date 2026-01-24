@@ -12,7 +12,7 @@ export class IonThrustersCard extends EnhancementCard {
 	readonly id = 'ion_thrusters';
 	readonly name = 'Ion Thrusters';
 	readonly effect = 'Gain 3km every turn, even without fuel';
-	readonly description = 'Gain 3km every turn, even without fuel.';
+	readonly description = 'Someone watched way too many sci-fi shows';
 	readonly availableAtLevels = [2];
 	readonly isCovert = false;
 

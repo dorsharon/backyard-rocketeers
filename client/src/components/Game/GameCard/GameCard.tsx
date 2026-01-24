@@ -1,7 +1,8 @@
-import { Badge, Box, Group, Text, Title } from '@mantine/core';
+import { Badge, Box, Group, Text } from '@mantine/core';
 import { IconBolt, IconBomb, IconRocket, IconSparkles, IconWand } from '@tabler/icons-react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { type CSSProperties, useRef, useState } from 'react';
+import { AutoSizeText } from './AutoSizeText';
 import { cardTypeConfig, sizeConfig, tierConfig } from './cardConfigs';
 import { DiceText } from './DiceText';
 import type { GameCardProps } from './GameCard.types';
@@ -17,6 +18,7 @@ export function GameCard({
 	isRevealed = true,
 	isSelected = false,
 	isPlayable = true,
+	isHandHovered = false,
 	onClick,
 	size = 'md',
 }: GameCardProps) {
@@ -128,14 +130,15 @@ export function GameCard({
 				width: sizeInfo.width,
 				height: sizeInfo.height,
 				perspective: 1000,
-				cursor: onClick && isPlayable ? 'pointer' : 'default',
-				opacity: isPlayable ? 1 : 0.6,
+				cursor: onClick ? 'pointer' : 'default',
+				opacity: isPlayable || isHandHovered ? 1 : 0.6,
+				transition: 'opacity 0.2s ease',
 			}}
 			onMouseMove={handleMouseMove}
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={handleMouseLeave}
-			whileTap={onClick && isPlayable ? { scale: 0.98 } : undefined}
-			onClick={onClick && isPlayable ? onClick : undefined}
+			whileTap={onClick ? { scale: 0.98 } : undefined}
+			onClick={onClick}
 		>
 			<motion.div
 				style={{
@@ -251,7 +254,8 @@ export function GameCard({
 					<Box
 						style={{
 							flex: '0 0 auto',
-							height: size === 'lg' ? 120 : size === 'md' ? 90 : 60,
+							height:
+								size === 'xl' ? 170 : size === 'lg' ? 140 : size === 'md' ? 100 : 60,
 							margin: '8px',
 							borderRadius: 8,
 							background: 'rgba(0, 0, 0, 0.4)',
@@ -265,10 +269,18 @@ export function GameCard({
 					>
 						{/* Placeholder icon based on type */}
 						<Box style={{ opacity: 0.3 }}>
-							{type === 'component' && <IconRocket size={size === 'lg' ? 48 : 36} />}
-							{type === 'sabotage' && <IconBomb size={size === 'lg' ? 48 : 36} />}
-							{type === 'ability' && <IconWand size={size === 'lg' ? 48 : 36} />}
-							{type === 'enhancement' && <IconSparkles size={size === 'lg' ? 48 : 36} />}
+							{type === 'component' && (
+								<IconRocket size={size === 'xl' ? 56 : size === 'lg' ? 48 : 36} />
+							)}
+							{type === 'sabotage' && (
+								<IconBomb size={size === 'xl' ? 56 : size === 'lg' ? 48 : 36} />
+							)}
+							{type === 'ability' && (
+								<IconWand size={size === 'xl' ? 56 : size === 'lg' ? 48 : 36} />
+							)}
+							{type === 'enhancement' && (
+								<IconSparkles size={size === 'xl' ? 56 : size === 'lg' ? 48 : 36} />
+							)}
 						</Box>
 
 						{/* Tier badge for components */}
@@ -291,17 +303,17 @@ export function GameCard({
 
 					{/* Card Title */}
 					<Box px="xs" pb={4}>
-						<Title
-							order={size === 'lg' ? 5 : 6}
-							c="white"
-							ta="center"
-							style={{
-								textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
-								lineHeight: 1.2,
-							}}
+						<AutoSizeText
+							maxLines={2}
+							baseFontSize={
+								size === 'xl' ? 20 : size === 'lg' ? 16 : size === 'md' ? 14 : 12
+							}
+							minFontSize={10}
+							fontWeight={700}
+							color="white"
 						>
 							{name}
-						</Title>
+						</AutoSizeText>
 					</Box>
 
 					{/* Card Effect & Description */}
@@ -322,25 +334,25 @@ export function GameCard({
 								style={{
 									background: `linear-gradient(135deg, ${config.accentColor}15, ${config.accentColor}05)`,
 									borderRadius: 6,
-									padding: size === 'sm' ? 4 : 6,
+									padding: size === 'sm' ? 4 : 8,
 									border: `1px solid ${config.accentColor}30`,
 								}}
 							>
-								<Text
-									size={sizeInfo.descSize}
-									c={config.accentColor}
-									ta="center"
-									fw={500}
-									style={{
-										lineHeight: 1.2,
-									}}
+								<AutoSizeText
+									maxLines={3}
+									baseFontSize={
+										size === 'xl' ? 16 : size === 'lg' ? 13 : size === 'md' ? 12 : 10
+									}
+									minFontSize={8}
+									fontWeight={500}
+									color={config.accentColor}
 								>
 									<DiceText
 										text={effect}
-										size={size === 'sm' ? 12 : 14}
+										size={size === 'xl' ? 16 : size === 'sm' ? 10 : size === 'md' ? 12 : 13}
 										color={config.accentColor}
 									/>
-								</Text>
+								</AutoSizeText>
 							</Box>
 						)}
 						{/* Flavor Text (Description) */}
@@ -349,21 +361,22 @@ export function GameCard({
 								flex: 1,
 								background: 'rgba(0, 0, 0, 0.3)',
 								borderRadius: 6,
-								padding: size === 'sm' ? 4 : 6,
+								padding: size === 'sm' ? 4 : 8,
 								border: `1px solid ${config.borderColor}20`,
 							}}
 						>
-							<Text
-								size={sizeInfo.descSize}
-								c="rgba(255, 255, 255, 0.6)"
-								ta="center"
-								fs="italic"
-								style={{
-									lineHeight: 1.2,
-								}}
+							<AutoSizeText
+								maxLines={3}
+								baseFontSize={
+									size === 'xl' ? 14 : size === 'lg' ? 12 : size === 'md' ? 11 : 10
+								}
+								minFontSize={8}
+								fontWeight={400}
+								fontStyle="italic"
+								color="rgba(255, 255, 255, 0.6)"
 							>
 								{description}
-							</Text>
+							</AutoSizeText>
 						</Box>
 					</Box>
 

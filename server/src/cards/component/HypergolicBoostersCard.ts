@@ -13,7 +13,7 @@ export class HypergolicBoostersCard extends ComponentCard {
 	readonly id = 'Da7GX02MLzo8RMjGXgYEV';
 	readonly name = 'Hypergolic Boosters';
 	readonly componentType = 'boosters' as const;
-	readonly effect = 'Strength: 3. +70km in Level 2';
+	readonly effect = '+70km in Level 2';
 	readonly description = 'Look what a mixture of two toxic fuels can do';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;

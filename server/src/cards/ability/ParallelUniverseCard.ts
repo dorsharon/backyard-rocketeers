@@ -12,7 +12,7 @@ export class ParallelUniverseCard extends AbilityCard {
 	readonly id = 'parallel_universe';
 	readonly name = 'Parallel Universe';
 	readonly effect = 'Swap up to 3 components with target player';
-	readonly description = 'Swap up to 3 components with target player';
+	readonly description = 'The universe has its own mysteries';
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;
 

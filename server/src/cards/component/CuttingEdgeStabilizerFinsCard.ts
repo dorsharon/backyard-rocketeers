@@ -13,7 +13,7 @@ export class CuttingEdgeStabilizerFinsCard extends ComponentCard {
 	readonly id = 'w27hCs8vzXW6tjfjyZmYa';
 	readonly name = 'Cutting Edge Stabilizer Fins';
 	readonly componentType = 'stabilizer_fins' as const;
-	readonly effect = 'Strength: 3. No navigation errors in Level 2';
+	readonly effect = 'No navigation errors in Level 2';
 	readonly description = "You'll be as steady as a rock... et.";
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;

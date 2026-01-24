@@ -12,7 +12,7 @@ export class AllTerrainWheelsCard extends EnhancementCard {
 	readonly id = 'all_terrain_wheels';
 	readonly name = 'All-Terrain Wheels';
 	readonly effect = 'Increase rover speed by 20%';
-	readonly description = 'Increase rover speed by 20%.';
+	readonly description = 'Traction is everything';
 	readonly availableAtLevels = [3];
 	readonly isCovert = false;
 

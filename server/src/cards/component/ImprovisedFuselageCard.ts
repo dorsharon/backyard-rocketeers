@@ -13,7 +13,7 @@ export class ImprovisedFuselageCard extends ComponentCard {
 	readonly id = 'Bu31GZSszf2eU9mlBuDi9';
 	readonly name = 'Improvised Fuselage';
 	readonly componentType = 'fuselage' as const;
-	readonly effect = 'Strength: 1. Roll 1d6 when challenged: fails on 1-2';
+	readonly effect = 'Roll 1d6 when challenged: fails on 1-2';
 	readonly description =
 		"I mean, who ever said that a couple of wine barrels CAN'T be used as a fuselage?";
 	readonly availableAtLevels = [1];

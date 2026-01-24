@@ -12,7 +12,7 @@ export class SlingshotCard extends AbilityCard {
 	readonly id = 'slingshot';
 	readonly name = 'Slingshot';
 	readonly effect = 'Gain +10km this turn and next turn when you launch';
-	readonly description = 'Gain +10km this turn and next turn when you launch';
+	readonly description = "Using the earth's gravity to slingshot your rocket is basically what nature intented";
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;
 

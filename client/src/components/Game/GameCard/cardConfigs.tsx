@@ -50,8 +50,9 @@ export const tierConfig: Record<number, TierConfig> = {
 	3: { label: 'Cutting Edge', color: '#22d3ee', icon: <IconStar size={12} /> },
 };
 
-export const sizeConfig: Record<'sm' | 'md' | 'lg', SizeConfig> = {
-	sm: { width: 140, height: 200, titleSize: 'xs', descSize: 'xs' },
-	md: { width: 180, height: 260, titleSize: 'sm', descSize: 'xs' },
-	lg: { width: 220, height: 320, titleSize: 'md', descSize: 'sm' },
+export const sizeConfig: Record<'sm' | 'md' | 'lg' | 'xl', SizeConfig> = {
+	sm: { width: 140, height: 210, titleSize: 'xs', descSize: 'xs' },
+	md: { width: 200, height: 300, titleSize: 'sm', descSize: 'xs' },
+	lg: { width: 240, height: 360, titleSize: 'md', descSize: 'sm' },
+	xl: { width: 300, height: 450, titleSize: 'md', descSize: 'sm' },
 };

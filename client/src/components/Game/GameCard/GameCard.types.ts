@@ -14,8 +14,9 @@ export interface GameCardProps {
 	isRevealed?: boolean;
 	isSelected?: boolean;
 	isPlayable?: boolean;
+	isHandHovered?: boolean;
 	onClick?: () => void;
-	size?: 'sm' | 'md' | 'lg';
+	size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export interface CardTypeConfig {

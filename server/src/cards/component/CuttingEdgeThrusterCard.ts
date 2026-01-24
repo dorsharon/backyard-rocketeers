@@ -13,7 +13,7 @@ export class CuttingEdgeThrusterCard extends ComponentCard {
 	readonly id = 'pTtpsRJ8NR29OY_GNhn0a';
 	readonly name = 'Cutting Edge Thruster';
 	readonly componentType = 'thruster' as const;
-	readonly effect = 'Strength: 3. Never fails';
+	readonly effect = 'Never fails';
 	readonly description = "To the moon! Oh, wait, we're going to Mars.";
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;

@@ -12,7 +12,7 @@ export class WrapDriveGeneratorCard extends AbilityCard {
 	readonly id = 'wrap_drive_generator';
 	readonly name = 'Wrap-Drive Generator';
 	readonly effect = 'Advance 50km';
-	readonly description = 'Advance 50km';
+	readonly description = 'The speed of light? yea, we are way past that...';
 	readonly availableAtLevels = [2];
 	readonly isCovert = false;
 

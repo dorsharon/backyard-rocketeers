@@ -1,5 +1,5 @@
 import { Group } from '@mantine/core';
-import { IconDice6 } from '@tabler/icons-react';
+import { IconDice6Filled } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 
 interface DiceTextProps {
@@ -11,7 +11,7 @@ interface DiceTextProps {
 // Dice icon component that shows a generic d6
 function DiceIcon({ size = 14, color }: { size?: number; color?: string }) {
 	// Use IconDice6 as a representative d6 icon
-	return <IconDice6 size={size} style={{ color, verticalAlign: 'middle' }} />;
+	return <IconDice6Filled size={size} style={{ color, verticalAlign: 'middle' }} />;
 }
 
 // Parse text and replace dice notation (1d6, 2d6, 3d6) with dice icons

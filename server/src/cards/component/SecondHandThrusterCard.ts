@@ -13,7 +13,7 @@ export class SecondHandThrusterCard extends ComponentCard {
 	readonly id = 'Nm6Z3rhXnCiAZeG3miae2';
 	readonly name = 'Second-hand Thruster';
 	readonly componentType = 'thruster' as const;
-	readonly effect = 'Strength: 2. Roll 1d6 at launch: engine failure on 1-2';
+	readonly effect = 'Roll 1d6 at launch: engine failure on 1-2';
 	readonly description = "There's nothing that some duct tape can't fix.";
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;

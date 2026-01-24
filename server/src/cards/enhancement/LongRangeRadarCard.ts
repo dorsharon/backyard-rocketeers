@@ -12,7 +12,7 @@ export class LongRangeRadarCard extends EnhancementCard {
 	readonly id = 'long_range_radar';
 	readonly name = 'Long Range Radar';
 	readonly effect = 'Detect and avoid asteroid storms';
-	readonly description = 'Detect and avoid asteroid storms.';
+	readonly description = 'The all-seeing-eye is watching your back!';
 	readonly availableAtLevels = [2];
 	readonly isCovert = false;
 

@@ -13,7 +13,7 @@ export class ImprovisedThrusterCard extends ComponentCard {
 	readonly id = 'kbX4JOINgdXsuFgkzTjCL';
 	readonly name = 'Improvised Thruster';
 	readonly componentType = 'thruster' as const;
-	readonly effect = 'Strength: 1. Roll 1d6 at launch: engine failure on 1-4';
+	readonly effect = 'Roll 1d6 at launch: engine failure on 1-4';
 	readonly description = "Let's hope you don't crash and burn.";
 	readonly availableAtLevels = [1];
 	readonly isCovert = false;
