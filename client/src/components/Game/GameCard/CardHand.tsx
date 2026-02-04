@@ -1,5 +1,5 @@
 import { ActionIcon, Avatar, Box, Button, Group, Portal, Stack, Text, Tooltip } from '@mantine/core';
-import { IconCards, IconX } from '@tabler/icons-react';
+import { IconCards, IconPlayerPlay, IconX, IconZoomIn } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 import { GameCard } from './GameCard';
@@ -43,6 +43,7 @@ export function CardHand({
 	);
 	const [zoomedCardId, setZoomedCardId] = useState<string | null>(null);
 	const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
+	const [actionMenuCardId, setActionMenuCardId] = useState<string | null>(null);
 	const [showTargetSelection, setShowTargetSelection] = useState(false);
 
 	// Check viewport size
@@ -84,8 +85,28 @@ export function CardHand({
 		: null;
 
 	const handleCardClick = (cardId: string) => {
-		// Always zoom on click for readability
+		// Toggle action menu on click
+		setActionMenuCardId((prev) => (prev === cardId ? null : cardId));
+	};
+
+	const handleZoomCard = (cardId: string) => {
 		setZoomedCardId(cardId);
+		setActionMenuCardId(null);
+	};
+
+	const handlePlayFromMenu = (cardId: string) => {
+		const card = cards.find((c) => c.id === cardId);
+		if (!card || !isPlayable) return;
+
+		// Check if this is a sabotage card that needs a target
+		if (card.type === 'sabotage') {
+			setZoomedCardId(cardId);
+			setActionMenuCardId(null);
+			setShowTargetSelection(true);
+			return;
+		}
+		onPlayCard?.(cardId);
+		setActionMenuCardId(null);
 	};
 
 	const handlePlayCard = () => {
@@ -127,6 +148,7 @@ export function CardHand({
 		<>
 			{/* Card Hand Display */}
 			<Box
+				onClick={() => setActionMenuCardId(null)}
 				style={{
 					position: 'relative',
 					height: containerHeight,
@@ -181,7 +203,12 @@ export function CardHand({
 								}}
 								onHoverStart={() => setHoveredCardId(card.id)}
 								onHoverEnd={() => setHoveredCardId(null)}
+								onClick={(e) => {
+									e.stopPropagation();
+									handleCardClick(card.id);
+								}}
 								style={{
+									position: 'relative',
 									marginLeft: index === 0 ? 0 : cardOverlap,
 									transformOrigin: 'bottom center',
 									cursor: 'pointer',
@@ -197,10 +224,9 @@ export function CardHand({
 									tier={card.tier}
 									isCovert={card.isCovert}
 									isRevealed={card.isRevealed}
-									isSelected={isSelected}
+									isSelected={isSelected || actionMenuCardId === card.id}
 									isPlayable={isPlayable}
 									isHandHovered={isHovered}
-									onClick={() => handleCardClick(card.id)}
 									size={cardSize}
 								/>
 							</motion.div>
@@ -208,6 +234,109 @@ export function CardHand({
 					})}
 				</Box>
 			</Box>
+
+			{/* Floating Action Bar - rendered via Portal */}
+			<Portal>
+				<AnimatePresence>
+					{actionMenuCardId && (
+						<motion.div
+							initial={{ opacity: 0, y: 20, scale: 0.95 }}
+							animate={{ opacity: 1, y: 0, scale: 1 }}
+							exit={{ opacity: 0, y: 20, scale: 0.95 }}
+							transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+							style={{
+								position: 'fixed',
+								bottom: isMobile ? 12 : 20,
+								left: '50%',
+								transform: 'translateX(-50%)',
+								zIndex: 1000,
+							}}
+						>
+							<Group
+								gap={8}
+								style={{
+									background: 'rgba(15, 15, 25, 0.95)',
+									backdropFilter: 'blur(12px)',
+									padding: '8px 12px',
+									borderRadius: 28,
+									border: '1px solid rgba(255, 255, 255, 0.12)',
+									boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05) inset',
+								}}
+							>
+								{[
+									{
+										icon: <IconZoomIn size={20} />,
+										label: 'View',
+										color: 'blue',
+										onClick: () => handleZoomCard(actionMenuCardId),
+										delay: 0,
+									},
+									{
+										icon: <IconPlayerPlay size={20} />,
+										label: isPlayable ? 'Play' : 'Wait',
+										tooltip: isPlayable ? 'Play Card' : (unplayableReason || 'Not your turn'),
+										color: isPlayable ? 'teal' : 'gray',
+										onClick: () => handlePlayFromMenu(actionMenuCardId),
+										delay: 0.05,
+										disabled: !isPlayable,
+									},
+									{
+										icon: <IconX size={20} />,
+										label: 'Close',
+										color: 'dark',
+										onClick: () => setActionMenuCardId(null),
+										delay: 0.1,
+									},
+								].map((action) => (
+									<motion.div
+										key={action.label}
+										initial={{ opacity: 0, y: 10 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{
+											type: 'spring',
+											stiffness: 500,
+											damping: 25,
+											delay: action.delay,
+										}}
+									>
+										<Tooltip
+											label={action.tooltip || action.label}
+											position="top"
+											withArrow
+											transitionProps={{ transition: 'pop', duration: 150 }}
+										>
+											<ActionIcon
+												variant={action.disabled ? 'subtle' : 'light'}
+												color={action.color}
+												size="xl"
+												radius="xl"
+												onClick={(e) => {
+													e.stopPropagation();
+													action.onClick();
+												}}
+												disabled={action.disabled}
+												style={{
+													transition: 'transform 0.15s ease, background 0.15s ease',
+												}}
+												onMouseEnter={(e) => {
+													if (!action.disabled) {
+														e.currentTarget.style.transform = 'scale(1.1)';
+													}
+												}}
+												onMouseLeave={(e) => {
+													e.currentTarget.style.transform = 'scale(1)';
+												}}
+											>
+												{action.icon}
+											</ActionIcon>
+										</Tooltip>
+									</motion.div>
+								))}
+							</Group>
+						</motion.div>
+					)}
+				</AnimatePresence>
+			</Portal>
 
 			{/* Zoomed Card Modal - rendered via Portal to ensure full-screen overlay */}
 			<Portal>
