@@ -197,6 +197,14 @@ export interface LaunchFailedMessage {
 	failedComponents: string[];
 }
 
+/**
+ * Covert cards update message.
+ * Sent privately to the owner with their real covert card data.
+ */
+export interface CovertCardsUpdateMessage {
+	cards: CardData[];
+}
+
 export interface GameMessage {
 	type: string;
 	data: unknown;

@@ -1,16 +1,8 @@
-export interface RocketComponent {
-	id: string;
-	name: string;
-	type: string;
-	strength: number;
-	tier: number;
-	isCovert: boolean;
-	isRevealed: boolean;
-}
+import type { CardData } from '../../../types/game';
 
 export interface RocketBuilderProps {
 	hasLaunchPad: boolean;
-	components: RocketComponent[];
+	components: CardData[];
 	groundFuel: number;
 	canLaunch: boolean;
 	isMyTurn: boolean;
@@ -20,7 +12,7 @@ export interface RocketBuilderProps {
 }
 
 export interface ComponentSlotProps {
-	component?: RocketComponent;
+	component?: CardData;
 	index: number;
 }
 

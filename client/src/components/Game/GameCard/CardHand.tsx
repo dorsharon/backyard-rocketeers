@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Button, Portal, Tooltip } from '@mantine/core';
+import { ActionIcon, Avatar, Box, Button, Group, Portal, Stack, Text, Tooltip } from '@mantine/core';
 import { IconCards, IconX } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -33,6 +33,8 @@ export function CardHand({
 	onPlayCard,
 	isPlayable = true,
 	unplayableReason,
+	otherPlayers = [],
+	currentPlayerId,
 }: CardHandProps) {
 	const totalCards = cards.length;
 	const [isMobile, setIsMobile] = useState(false);
@@ -41,6 +43,7 @@ export function CardHand({
 	);
 	const [zoomedCardId, setZoomedCardId] = useState<string | null>(null);
 	const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
+	const [showTargetSelection, setShowTargetSelection] = useState(false);
 
 	// Check viewport size
 	useEffect(() => {
@@ -87,10 +90,32 @@ export function CardHand({
 
 	const handlePlayCard = () => {
 		if (zoomedCardId && isPlayable) {
+			// Check if this is a sabotage card that needs a target
+			if (zoomedCard?.type === 'sabotage') {
+				setShowTargetSelection(true);
+				return;
+			}
 			onPlayCard?.(zoomedCardId);
 			setZoomedCardId(null);
 		}
 	};
+
+	const handleSelectTarget = (targetPlayerId: string) => {
+		if (zoomedCardId) {
+			onPlayCard?.(zoomedCardId, targetPlayerId);
+			setZoomedCardId(null);
+			setShowTargetSelection(false);
+		}
+	};
+
+	const handleCancelTargetSelection = () => {
+		setShowTargetSelection(false);
+	};
+
+	// Get valid targets for sabotage (opponents with launch pad)
+	const validTargets = otherPlayers.filter(
+		(p) => p.sessionId !== currentPlayerId && p.hasLaunchPad
+	);
 
 	const cardSize = isMobile ? 'sm' : 'md';
 	const containerHeight = isMobile
@@ -263,8 +288,44 @@ export function CardHand({
 									/>
 								</Box>
 
-								{/* Play button when it's player's turn */}
-								{isPlayable ? (
+								{/* Target selection for sabotage cards */}
+								{showTargetSelection && zoomedCard?.type === 'sabotage' ? (
+									<Stack gap="md" align="center" style={{ marginTop: 8 }}>
+										<Text c="white" fw={500}>Select a target:</Text>
+										{validTargets.length > 0 ? (
+											<Group gap="sm" justify="center">
+												{validTargets.map((target) => (
+													<Button
+														key={target.sessionId}
+														variant="light"
+														color="red"
+														size="md"
+														leftSection={
+															<Avatar size="sm" color="red" radius="xl">
+																{target.name.charAt(0).toUpperCase()}
+															</Avatar>
+														}
+														onClick={() => handleSelectTarget(target.sessionId)}
+													>
+														{target.name}
+													</Button>
+												))}
+											</Group>
+										) : (
+											<Text c="dimmed" size="sm" fs="italic">
+												No valid targets (opponents need a Launch Pad)
+											</Text>
+										)}
+										<Button
+											variant="subtle"
+											color="gray"
+											size="sm"
+											onClick={handleCancelTargetSelection}
+										>
+											Cancel
+										</Button>
+									</Stack>
+								) : isPlayable ? (
 									<Button
 										size="lg"
 										leftSection={<IconCards size={20} />}
@@ -276,7 +337,7 @@ export function CardHand({
 											boxShadow: '0 4px 20px rgba(0, 255, 128, 0.3)',
 										}}
 									>
-										Play Card
+										{zoomedCard?.type === 'sabotage' ? 'Select Target' : 'Play Card'}
 									</Button>
 								) : (
 									<Tooltip

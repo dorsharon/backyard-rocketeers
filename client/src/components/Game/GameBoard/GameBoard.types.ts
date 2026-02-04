@@ -9,6 +9,12 @@ export interface GameBoardProps {
 	error?: string | null;
 	onClearError?: () => void;
 	pendingAction?: string | null;
+	/**
+	 * Real covert card data for the current player.
+	 * Server sends this privately; should be merged with rocketComponents
+	 * to show the owner their real covert card details.
+	 */
+	myCovertCards?: CardData[];
 }
 
 export interface PlayerData {

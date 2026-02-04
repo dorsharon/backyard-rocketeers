@@ -27,8 +27,8 @@ export abstract class Card {
 		player: Player,
 		targetPlayerId?: string,
 	): boolean {
-		// Default: can play if in player's hand
-		return player.hand.some((c) => c.id === this.id);
+		// Default: can play if in player's hand (compare baseId, not instance id)
+		return player.hand.some((c) => c.baseId === this.id);
 	}
 
 	/**

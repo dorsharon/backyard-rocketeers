@@ -111,7 +111,7 @@ function App() {
   const [hasJoined, setHasJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
 
-  const { gameState, isConnected, error, playerId, pendingAction, connect, sendMessage, clearError } =
+  const { gameState, isConnected, error, playerId, pendingAction, myCovertCards, connect, sendMessage, clearError } =
     useGameRoom(playerName);
 
   const handleJoin = async () => {
@@ -365,6 +365,7 @@ function App() {
         error={error}
         onClearError={clearError}
         pendingAction={pendingAction}
+        myCovertCards={myCovertCards}
       />
     </Box>
   );

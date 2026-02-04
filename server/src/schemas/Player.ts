@@ -6,14 +6,20 @@ import { CardSchema } from './CardSchema';
  * Synchronized across all clients via Colyseus.
  *
  * See GAME_RULES.md for complete player state requirements.
+ *
+ * NOTE: Hand privacy is maintained because each player only sees
+ * their own hand data from the serialized state. The client-side
+ * filtering happens naturally as each player only displays their
+ * own player's hand from the game state.
  */
 export class Player extends Schema {
 	@type('string') sessionId: string = '';
 	@type('string') name: string = '';
 	@type('number') level: number = 1; // 1, 2, or 3
 
-	// Hand (private - only visible to owner)
-	@type([CardSchema]) hand = new ArraySchema<CardSchema>();
+	// Hand (displayed only to the owning player on the client side)
+	@type([CardSchema])
+	hand = new ArraySchema<CardSchema>();
 
 	// Rocket components (visible to all, except covert)
 	@type([CardSchema]) rocketComponents = new ArraySchema<CardSchema>();

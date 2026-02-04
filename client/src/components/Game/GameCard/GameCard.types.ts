@@ -41,6 +41,12 @@ export interface SizeConfig {
 	descSize: 'xs' | 'sm';
 }
 
+export interface TargetPlayer {
+	sessionId: string;
+	name: string;
+	hasLaunchPad: boolean;
+}
+
 export interface CardHandProps {
 	cards: Array<{
 		id: string;
@@ -55,7 +61,9 @@ export interface CardHandProps {
 	}>;
 	selectedCardId?: string | null;
 	onCardClick?: (cardId: string) => void;
-	onPlayCard?: (cardId: string) => void;
+	onPlayCard?: (cardId: string, targetPlayerId?: string) => void;
 	isPlayable?: boolean;
 	unplayableReason?: string;
+	otherPlayers?: TargetPlayer[];
+	currentPlayerId?: string;
 }

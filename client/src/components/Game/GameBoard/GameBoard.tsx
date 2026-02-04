@@ -17,15 +17,41 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { CardHand } from '../GameCard/CardHand';
 import { LaunchSequence } from '../LaunchSequence/LaunchSequence';
+import { PlayerRocketCard } from '../PlayerRocketCard/PlayerRocketCard';
 import { RocketBuilder } from '../RocketBuilder/RocketBuilder';
-import type { GamePhase } from '../../../types/game';
+import type { CardData, GamePhase } from '../../../types/game';
 import type { GameBoardProps, GameStateData, LaunchSequenceState, PlayerData } from './GameBoard.types';
 import { GameStatusHeader } from './GameStatusHeader';
-import { PlayerCard } from './PlayerCard';
 import { PreGameLobby } from './PreGameLobby';
 import { StarField } from './StarField';
 import { WinnerCelebration } from './WinnerCelebration';
 import { YourStatusPanel } from './YourStatusPanel';
+
+/**
+ * Merge placeholder covert cards with real covert card data.
+ * The server sends placeholders in rocketComponents for security,
+ * but sends real data privately to the owner via myCovertCards.
+ */
+function mergeCovertCards(
+	rocketComponents: CardData[],
+	myCovertCards: CardData[] | undefined,
+): CardData[] {
+	if (!myCovertCards || myCovertCards.length === 0) {
+		return rocketComponents;
+	}
+
+	// Create a map of real covert cards by ID for quick lookup
+	const covertCardMap = new Map(myCovertCards.map((card) => [card.id, card]));
+
+	// Replace placeholders with real data where available
+	return rocketComponents.map((component) => {
+		const realCard = covertCardMap.get(component.id);
+		if (realCard) {
+			return realCard;
+		}
+		return component;
+	});
+}
 
 /**
  * Main game board component.
@@ -38,6 +64,7 @@ export function GameBoard({
 	error: externalError,
 	onClearError,
 	pendingAction,
+	myCovertCards,
 }: GameBoardProps) {
 	const [localError, setLocalError] = useState<string | null>(null);
 	const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
@@ -113,6 +140,12 @@ export function GameBoard({
 	const currentTurnPlayer = players.find((p) => p.sessionId === currentTurnPlayerId);
 	const isMyTurn = currentTurnPlayerId === playerId;
 
+	// Merge covert card placeholders with real data for the current player
+	const myRocketComponents = mergeCovertCards(
+		currentPlayer?.rocketComponents || [],
+		myCovertCards,
+	);
+
 	// Wrapper for sending messages with error handling
 	const handleSendMessage = (type: string, data?: Record<string, unknown>) => {
 		setLocalError(null);
@@ -160,14 +193,14 @@ export function GameBoard({
 	}
 
 	// Check if rocket can launch (using componentType for type-safe lookup)
-	const components = currentPlayer?.rocketComponents || [];
+	// Use merged components so owner's covert cards are properly checked
 	const canLaunch =
 		(currentPlayer?.hasLaunchPad || false) &&
 		(currentPlayer?.groundFuel || 0) >= 100 &&
-		components.some((c) => c.componentType === 'fuselage') &&
-		components.some((c) => c.componentType === 'nose_cone') &&
-		components.some((c) => c.componentType === 'stabilizer_fins') &&
-		components.some((c) => c.componentType === 'thruster');
+		myRocketComponents.some((c) => c.componentType === 'fuselage') &&
+		myRocketComponents.some((c) => c.componentType === 'nose_cone') &&
+		myRocketComponents.some((c) => c.componentType === 'stabilizer_fins') &&
+		myRocketComponents.some((c) => c.componentType === 'thruster');
 
 	// Main game UI
 	return (
@@ -260,6 +293,7 @@ export function GameBoard({
 							gameState={gameState}
 							handleSendMessage={handleSendMessage}
 							pendingAction={pendingAction}
+							myRocketComponents={myRocketComponents}
 						/>
 					) : (
 						<DesktopLayout
@@ -273,6 +307,7 @@ export function GameBoard({
 							gameState={gameState}
 							handleSendMessage={handleSendMessage}
 							pendingAction={pendingAction}
+							myRocketComponents={myRocketComponents}
 						/>
 					)}
 
@@ -337,8 +372,8 @@ export function GameBoard({
 											setSelectedCardId(selectedCardId === cardId ? null : cardId);
 										}
 									}}
-									onPlayCard={(cardId) => {
-										handleSendMessage('play_card', { cardId });
+									onPlayCard={(cardId, targetPlayerId) => {
+										handleSendMessage('play_card', { cardId, targetPlayerId });
 										setSelectedCardId(null);
 									}}
 									isPlayable={isMyTurn && gameState.currentPhase === 'action'}
@@ -349,6 +384,14 @@ export function GameBoard({
 												? 'Draw a card first'
 												: undefined
 									}
+									otherPlayers={players
+										.filter((p) => p.sessionId !== playerId)
+										.map((p) => ({
+											sessionId: p.sessionId,
+											name: p.name,
+											hasLaunchPad: p.hasLaunchPad,
+										}))}
+									currentPlayerId={playerId || undefined}
 								/>
 							</Stack>
 						</Card>
@@ -371,6 +414,8 @@ interface LayoutProps {
 	gameState: GameStateData;
 	handleSendMessage: (type: string, data?: Record<string, unknown>) => void;
 	pendingAction?: string | null;
+	/** Merged rocket components with real covert card data for the owner */
+	myRocketComponents: CardData[];
 }
 
 interface MobileLayoutProps extends LayoutProps {
@@ -389,22 +434,34 @@ function MobileLayout({
 	gameState,
 	handleSendMessage,
 	pendingAction,
+	myRocketComponents,
 }: MobileLayoutProps) {
 	return (
 		<Box>
 			{mobileTab === 'players' && (
 				<Stack gap="md">
 					<Title order={5} c="white">
-						Astronauts ({players.length})
+						All Players ({players.length})
 					</Title>
-					{players.map((player) => (
-						<PlayerCard
-							key={player.sessionId}
-							player={player}
-							isYou={player.sessionId === playerId}
-							isCurrentTurn={player.sessionId === currentTurnPlayerId}
-						/>
-					))}
+					<Grid gutter="sm">
+						{players.map((player) => (
+							<Grid.Col key={player.sessionId} span={6}>
+								<PlayerRocketCard
+									sessionId={player.sessionId}
+									name={player.name}
+									level={player.level}
+									isReady={player.isReady}
+									isBot={player.isBot}
+									hasLaunchPad={player.hasLaunchPad}
+									groundFuel={player.groundFuel}
+									rocketComponents={player.sessionId === playerId ? myRocketComponents : player.rocketComponents}
+									isYou={player.sessionId === playerId}
+									isCurrentTurn={player.sessionId === currentTurnPlayerId}
+									isOwner={player.sessionId === playerId}
+								/>
+							</Grid.Col>
+						))}
+					</Grid>
 				</Stack>
 			)}
 
@@ -413,7 +470,7 @@ function MobileLayout({
 					{currentPlayer && (
 						<RocketBuilder
 							hasLaunchPad={currentPlayer.hasLaunchPad || false}
-							components={currentPlayer.rocketComponents || []}
+							components={myRocketComponents}
 							groundFuel={currentPlayer.groundFuel || 0}
 							canLaunch={canLaunch}
 							isMyTurn={isMyTurn}
@@ -452,60 +509,78 @@ function DesktopLayout({
 	gameState,
 	handleSendMessage,
 	pendingAction,
+	myRocketComponents,
 }: LayoutProps) {
+	// Get other players (not the current viewing player)
+	const otherPlayers = players.filter((p) => p.sessionId !== playerId);
+
 	return (
-		<Grid gutter="lg">
-			{/* Left Panel - Players */}
-			<Grid.Col span={{ base: 12, md: 4 }}>
-				<Stack gap="md">
-					<Title order={5} c="white">
-						Astronauts ({players.length})
+		<Stack gap="lg">
+			{/* Top Row - Other Players' Rockets */}
+			{otherPlayers.length > 0 && (
+				<Box>
+					<Title order={6} c="white" mb="sm">
+						Opponents ({otherPlayers.length})
 					</Title>
-					{players.map((player) => (
-						<PlayerCard
-							key={player.sessionId}
-							player={player}
-							isYou={player.sessionId === playerId}
-							isCurrentTurn={player.sessionId === currentTurnPlayerId}
-						/>
-					))}
-				</Stack>
-			</Grid.Col>
+					<Group gap="md" wrap="wrap">
+						{otherPlayers.map((player) => (
+							<Box key={player.sessionId} style={{ width: 200 }}>
+								<PlayerRocketCard
+									sessionId={player.sessionId}
+									name={player.name}
+									level={player.level}
+									isReady={player.isReady}
+									isBot={player.isBot}
+									hasLaunchPad={player.hasLaunchPad}
+									groundFuel={player.groundFuel}
+									rocketComponents={player.rocketComponents}
+									isYou={false}
+									isCurrentTurn={player.sessionId === currentTurnPlayerId}
+									isOwner={false}
+								/>
+							</Box>
+						))}
+					</Group>
+				</Box>
+			)}
 
-			{/* Middle Panel - Rocket Builder */}
-			<Grid.Col span={{ base: 12, md: 5 }}>
-				<Stack gap="md">
-					{currentPlayer && (
-						<RocketBuilder
-							hasLaunchPad={currentPlayer.hasLaunchPad || false}
-							components={currentPlayer.rocketComponents || []}
-							groundFuel={currentPlayer.groundFuel || 0}
-							canLaunch={canLaunch}
+			{/* Main Content Grid */}
+			<Grid gutter="lg">
+				{/* Left Panel - Your Rocket Builder */}
+				<Grid.Col span={{ base: 12, md: 7 }}>
+					<Stack gap="md">
+						{currentPlayer && (
+							<RocketBuilder
+								hasLaunchPad={currentPlayer.hasLaunchPad || false}
+								components={myRocketComponents}
+								groundFuel={currentPlayer.groundFuel || 0}
+								canLaunch={canLaunch}
+								isMyTurn={isMyTurn}
+								currentPhase={gameState.currentPhase}
+								onLaunch={() => handleSendMessage('launch_rocket')}
+								pendingAction={pendingAction}
+							/>
+						)}
+
+						{/* Action Buttons */}
+						<ActionButtons
 							isMyTurn={isMyTurn}
+							gameEnded={gameState.gameEnded}
 							currentPhase={gameState.currentPhase}
-							onLaunch={() => handleSendMessage('launch_rocket')}
+							currentTurnPlayerName={currentTurnPlayer?.name}
+							handleSendMessage={handleSendMessage}
 							pendingAction={pendingAction}
+							isMobile={false}
 						/>
-					)}
+					</Stack>
+				</Grid.Col>
 
-					{/* Action Buttons */}
-					<ActionButtons
-						isMyTurn={isMyTurn}
-						gameEnded={gameState.gameEnded}
-						currentPhase={gameState.currentPhase}
-						currentTurnPlayerName={currentTurnPlayer?.name}
-						handleSendMessage={handleSendMessage}
-						pendingAction={pendingAction}
-						isMobile={false}
-					/>
-				</Stack>
-			</Grid.Col>
-
-			{/* Right Panel - Your Status */}
-			<Grid.Col span={{ base: 12, md: 3 }}>
-				{currentPlayer && <YourStatusPanel player={currentPlayer} />}
-			</Grid.Col>
-		</Grid>
+				{/* Right Panel - Your Status */}
+				<Grid.Col span={{ base: 12, md: 5 }}>
+					{currentPlayer && <YourStatusPanel player={currentPlayer} />}
+				</Grid.Col>
+			</Grid>
+		</Stack>
 	);
 }
 

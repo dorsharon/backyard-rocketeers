@@ -4,7 +4,6 @@ import {
 	Button,
 	Card,
 	Group,
-	Progress,
 	Stack,
 	Text,
 	ThemeIcon,
@@ -12,7 +11,7 @@ import {
 } from '@mantine/core';
 import { IconBolt, IconFlame, IconRocket, IconRocketOff, IconShield, IconTarget } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ComponentSlot } from './ComponentSlot';
+import { RocketVisual } from '../RocketVisual/RocketVisual';
 import type { LaunchRequirement, RocketBuilderProps } from './RocketBuilder.types';
 
 export function RocketBuilder({
@@ -25,19 +24,14 @@ export function RocketBuilder({
 	onLaunch,
 	pendingAction,
 }: RocketBuilderProps) {
-	const slots = Array(6).fill(null);
-	components.forEach((comp, i) => {
-		if (i < 6) slots[i] = comp;
-	});
-
 	// Calculate rocket strength
 	const totalStrength = components.reduce((sum, c) => sum + (c.strength || 0), 0);
 
-	// Check required components
-	const hasFuselage = components.some((c) => c.name.includes('Fuselage'));
-	const hasNoseCone = components.some((c) => c.name.includes('Nose'));
-	const hasFins = components.some((c) => c.name.includes('Fins') || c.name.includes('Stabilizer'));
-	const hasThruster = components.some((c) => c.name.includes('Thruster'));
+	// Check required components using componentType for accuracy
+	const hasFuselage = components.some((c) => c.componentType === 'fuselage');
+	const hasNoseCone = components.some((c) => c.componentType === 'nose_cone');
+	const hasFins = components.some((c) => c.componentType === 'stabilizer_fins');
+	const hasThruster = components.some((c) => c.componentType === 'thruster');
 
 	const requirements: LaunchRequirement[] = [
 		{ name: 'Launch Pad', met: hasLaunchPad, icon: <IconTarget size={14} /> },
@@ -100,36 +94,15 @@ export function RocketBuilder({
 							</Text>
 						</Stack>
 					) : (
-						<>
-							{/* Rocket Components Grid */}
-							<Group justify="center" gap="xs" wrap="wrap">
-								{slots.map((comp, i) => (
-									<ComponentSlot key={i} component={comp} index={i} />
-								))}
-							</Group>
-
-							{/* Fuel Gauge */}
-							<Box mt="md">
-								<Group justify="space-between" mb={4}>
-									<Text size="xs" c="dimmed">
-										Fuel Level
-									</Text>
-									<Text size="xs" c={groundFuel >= 100 ? 'green' : 'white'} fw={600}>
-										{groundFuel}%
-									</Text>
-								</Group>
-								<Progress
-									value={groundFuel}
-									color={groundFuel >= 100 ? 'green' : groundFuel >= 50 ? 'yellow' : 'red'}
-									size="lg"
-									radius="xl"
-									animated={groundFuel > 0 && groundFuel < 100}
-									style={{
-										background: 'rgba(0, 0, 0, 0.3)',
-									}}
-								/>
-							</Box>
-						</>
+						<Box style={{ display: 'flex', justifyContent: 'center' }}>
+							<RocketVisual
+								components={components}
+								hasLaunchPad={hasLaunchPad}
+								groundFuel={groundFuel}
+								size="lg"
+								isOwner={true}
+							/>
+						</Box>
 					)}
 				</Box>
 

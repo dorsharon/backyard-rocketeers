@@ -1,10 +1,17 @@
 import { type Client, Room } from 'colyseus';
 import { CardRegistry } from '../cards/CardRegistry';
-import type { CardSchema } from '../schemas/CardSchema';
+import { CardSchema } from '../schemas/CardSchema';
 import { GameState } from '../schemas/GameState';
 import { Player } from '../schemas/Player';
 import { BotAI } from '../utils/BotAI';
 import { roll1d6, rollDice, shuffleArray, sumDice } from '../utils/dice';
+
+/**
+ * Private covert card storage.
+ * Maps playerId -> array of real covert card data (not synced to clients).
+ * This ensures other players can't see unrevealed covert card details.
+ */
+type CovertCardStorage = Map<string, CardSchema[]>;
 
 /**
  * GameRoom - Main game logic for Backyard Rocketeers.
@@ -18,6 +25,13 @@ export class GameRoom extends Room<GameState> {
 	minClients = 2;
 	private botCounter = 0;
 	private botNames = ['RocketBot', 'SpaceAI', 'MarsBot', 'AstroBot', 'CosmicAI', 'StarBot'];
+
+	/**
+	 * Server-side storage for real covert card data.
+	 * The synced rocketComponents array only contains placeholders for unrevealed covert cards.
+	 * Real data is sent privately to owners via 'covert_cards_update' message.
+	 */
+	private covertCardStorage: CovertCardStorage = new Map();
 
 	onCreate(_options: Record<string, unknown>): void {
 		// Initialize game state
@@ -34,6 +48,7 @@ export class GameRoom extends Room<GameState> {
 		this.onMessage('launch_rocket', this.handleLaunchRocket.bind(this));
 		this.onMessage('add_bot', this.handleAddBot.bind(this));
 		this.onMessage('remove_bot', this.handleRemoveBot.bind(this));
+		this.onMessage('request_covert_cards', this.handleRequestCovertCards.bind(this));
 
 		// Initialize decks (will be populated later with actual cards)
 		this.initializeDecks();
@@ -120,6 +135,138 @@ export class GameRoom extends Room<GameState> {
 		);
 	}
 
+	/**
+	 * Create a placeholder card for unrevealed covert cards.
+	 * This is what other players see in the synced state.
+	 */
+	private createCovertPlaceholder(slotIndex: number): CardSchema {
+		return new CardSchema(
+			`covert_placeholder_${slotIndex}`,
+			'covert_placeholder',
+			'Hidden Component',
+			'component',
+			'???',
+			'This component is hidden from view.',
+			true, // isCovert
+			0, // strength hidden
+			0, // tier hidden
+			'', // componentType hidden
+		);
+	}
+
+	/**
+	 * Add a covert card to a player's rocket securely.
+	 * Stores real data server-side, syncs placeholder to other clients.
+	 * Sends real data privately to the owner.
+	 */
+	private addCovertCardToRocket(
+		player: Player,
+		realCard: CardSchema,
+		client?: Client,
+	): void {
+		// Initialize storage for this player if needed
+		if (!this.covertCardStorage.has(player.sessionId)) {
+			this.covertCardStorage.set(player.sessionId, []);
+		}
+
+		// Store the real card data server-side
+		const playerCovertCards = this.covertCardStorage.get(player.sessionId);
+		if (playerCovertCards) {
+			playerCovertCards.push(realCard);
+		}
+
+		// Add placeholder to synced rocketComponents
+		const placeholder = this.createCovertPlaceholder(
+			player.rocketComponents.length,
+		);
+		// Copy the instance ID so we can match placeholder to real card
+		placeholder.id = realCard.id;
+		player.rocketComponents.push(placeholder);
+
+		// Update covert cards count
+		player.covertCardsCount = playerCovertCards?.length || 0;
+
+		// Send real data privately to the owner
+		this.sendCovertCardsToOwner(player, client);
+	}
+
+	/**
+	 * Send the owner their real covert card data.
+	 */
+	private sendCovertCardsToOwner(player: Player, client?: Client): void {
+		const covertCards = this.covertCardStorage.get(player.sessionId) || [];
+
+		// Find the client for this player
+		let targetClient = client;
+		if (!targetClient) {
+			for (const c of this.clients) {
+				if (c.sessionId === player.sessionId) {
+					targetClient = c;
+					break;
+				}
+			}
+		}
+
+		if (targetClient) {
+			targetClient.send('covert_cards_update', {
+				cards: covertCards.map((card) => ({
+					id: card.id,
+					baseId: card.baseId,
+					name: card.name,
+					type: card.type,
+					effect: card.effect,
+					description: card.description,
+					isCovert: card.isCovert,
+					isRevealed: card.isRevealed,
+					strength: card.strength,
+					tier: card.tier,
+					componentType: card.componentType,
+				})),
+			});
+		}
+	}
+
+	/**
+	 * Reveal a covert card (replace placeholder with real data in synced state).
+	 */
+	private revealCovertCard(player: Player, cardId: string): boolean {
+		const covertCards = this.covertCardStorage.get(player.sessionId);
+		if (!covertCards) return false;
+
+		// Find the real card
+		const cardIndex = covertCards.findIndex((c) => c.id === cardId);
+		if (cardIndex === -1) return false;
+
+		const realCard = covertCards[cardIndex];
+		if (!realCard) return false;
+
+		// Find and replace placeholder in rocketComponents
+		const componentIndex = player.rocketComponents.findIndex(
+			(c: CardSchema) => c.id === cardId,
+		);
+		if (componentIndex !== -1) {
+			realCard.isRevealed = true;
+			player.rocketComponents[componentIndex] = realCard;
+		}
+
+		// Remove from covert storage
+		covertCards.splice(cardIndex, 1);
+		player.covertCardsCount = covertCards.length;
+
+		// Update owner with new covert cards list
+		this.sendCovertCardsToOwner(player);
+
+		return true;
+	}
+
+	/**
+	 * Get the real card data for a covert card (server-side only).
+	 */
+	private getRealCovertCard(playerId: string, cardId: string): CardSchema | null {
+		const covertCards = this.covertCardStorage.get(playerId);
+		if (!covertCards) return null;
+		return covertCards.find((c) => c.id === cardId) || null;
+	}
 
 	/**
 	 * Handle player ready signal.
@@ -365,9 +512,42 @@ export class GameRoom extends Room<GameState> {
 			return;
 		}
 
-		// Validate card can be played
+		// Validate card can be played with detailed error messages
 		if (!cardImpl.canPlay(this.state, player, targetPlayerId)) {
-			client.send('error', { message: 'Cannot play this card!' });
+			// Provide specific error message based on card type
+			let errorMessage = 'Cannot play this card!';
+
+			if (cardSchema.type === 'sabotage') {
+				if (!targetPlayerId) {
+					errorMessage = 'Sabotage cards require selecting a target player!';
+				} else {
+					const target = this.state.players.get(targetPlayerId);
+					if (!target) {
+						errorMessage = 'Invalid target player!';
+					} else if (target.sessionId === player.sessionId) {
+						errorMessage = 'Cannot sabotage yourself!';
+					} else if (!target.hasLaunchPad) {
+						errorMessage = 'Target player needs a Launch Pad first!';
+					}
+				}
+			} else if (cardSchema.type === 'component') {
+				if (cardSchema.componentType === 'launch_pad' && player.hasLaunchPad) {
+					errorMessage = 'You already have a Launch Pad!';
+				} else if (cardSchema.componentType !== 'launch_pad' && !player.hasLaunchPad) {
+					errorMessage = 'You need a Launch Pad first!';
+				} else if (player.rocketComponents.length >= 6 && cardSchema.componentType !== 'fuel_tank') {
+					errorMessage = 'Your rocket is full (6 components max)!';
+				} else {
+					const hasDuplicate = player.rocketComponents.some(
+						(c: CardSchema) => c.componentType === cardSchema.componentType && cardSchema.componentType !== 'fuel_tank'
+					);
+					if (hasDuplicate) {
+						errorMessage = `You already have a ${cardSchema.name}!`;
+					}
+				}
+			}
+
+			client.send('error', { message: errorMessage });
 			return;
 		}
 
@@ -376,13 +556,33 @@ export class GameRoom extends Room<GameState> {
 
 		// Execute card effect
 		try {
-			cardImpl.apply(this.state, player, targetPlayerId, additionalData);
+			// Special handling for covert component cards
+			if (cardSchema.isCovert && cardSchema.type === 'component') {
+				// Execute apply but intercept the component addition
+				const componentsBefore = player.rocketComponents.length;
+				cardImpl.apply(this.state, player, targetPlayerId, additionalData);
+
+				// If a component was added, replace it with secure covert storage
+				if (player.rocketComponents.length > componentsBefore) {
+					// Remove the directly-added component
+					const addedCard = player.rocketComponents.pop();
+
+					if (addedCard) {
+						// Re-add via secure covert storage
+						this.addCovertCardToRocket(player, addedCard, client);
+					}
+				}
+			} else {
+				// Normal card execution
+				cardImpl.apply(this.state, player, targetPlayerId, additionalData);
+			}
 
 			this.broadcast('card_played', {
 				playerId: client.sessionId,
 				cardId: cardId,
 				cardName: cardSchema.name,
 				cardType: cardSchema.type,
+				isCovert: cardSchema.isCovert,
 				targetPlayerId: targetPlayerId || null,
 				success: true,
 			});
@@ -572,6 +772,16 @@ export class GameRoom extends Room<GameState> {
 	}
 
 	/**
+	 * Handle request for covert cards (for reconnection/initial sync).
+	 */
+	private handleRequestCovertCards(client: Client, _message: unknown): void {
+		const player = this.state.players.get(client.sessionId);
+		if (!player) return;
+
+		this.sendCovertCardsToOwner(player, client);
+	}
+
+	/**
 	 * Handle add bot request.
 	 * Creates a bot player that will be controlled by the server.
 	 */
@@ -750,13 +960,27 @@ export class GameRoom extends Room<GameState> {
 		bot.hand.splice(cardIndex, 1);
 
 		try {
-			cardImpl.apply(this.state, bot, targetPlayerId);
+			// Special handling for covert component cards
+			if (cardSchema.isCovert && cardSchema.type === 'component') {
+				const componentsBefore = bot.rocketComponents.length;
+				cardImpl.apply(this.state, bot, targetPlayerId);
+
+				if (bot.rocketComponents.length > componentsBefore) {
+					const addedCard = bot.rocketComponents.pop();
+					if (addedCard) {
+						this.addCovertCardToRocket(bot, addedCard);
+					}
+				}
+			} else {
+				cardImpl.apply(this.state, bot, targetPlayerId);
+			}
 
 			this.broadcast('card_played', {
 				playerId: bot.sessionId,
 				cardId: cardId,
 				cardName: cardSchema.name,
 				cardType: cardSchema.type,
+				isCovert: cardSchema.isCovert,
 				targetPlayerId: targetPlayerId || null,
 				success: true,
 			});

@@ -2,8 +2,10 @@ import type { Room } from 'colyseus.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { joinGameRoom, leaveGameRoom } from '../lib/colyseus';
 import type {
+  CardData,
   CardsDrawnMessage,
   CardPlayedMessage,
+  CovertCardsUpdateMessage,
   DiceRollMessage,
   ErrorMessage,
   GameEndedMessage,
@@ -51,6 +53,13 @@ export function useGameRoom(playerName: string) {
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [lastMessage, setLastMessage] = useState<GameMessage | null>(null);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
+
+  /**
+   * Covert cards that belong to the current player.
+   * These contain the real card data (not placeholders) for the owner.
+   * Server sends this privately via covert_cards_update message.
+   */
+  const [myCovertCards, setMyCovertCards] = useState<CardData[]>([]);
 
   // Track if we've set up listeners to avoid duplicates
   const listenersSetUp = useRef(false);
@@ -149,6 +158,13 @@ export function useGameRoom(playerName: string) {
           setLastMessage({ type: 'game_ended', data: message, timestamp: Date.now() });
         });
 
+        // Listen for covert cards update (sent privately to owner)
+        newRoom.onMessage('covert_cards_update', (message: CovertCardsUpdateMessage) => {
+          console.log('[Game] Covert cards update:', message.cards.length, 'cards');
+          setMyCovertCards(message.cards);
+          setLastMessage({ type: 'covert_cards_update', data: message, timestamp: Date.now() });
+        });
+
         // Listen for state changes
         // We clone the state to ensure React detects changes properly
         // since Colyseus uses proxies that React may not track correctly
@@ -244,6 +260,14 @@ export function useGameRoom(playerName: string) {
     return undefined;
   }, [error]);
 
+  // Request covert cards when connected and game started
+  useEffect(() => {
+    if (room && isConnected && gameState?.gameStarted) {
+      // Request covert cards (for reconnection or initial sync)
+      room.send('request_covert_cards', {});
+    }
+  }, [room, isConnected, gameState?.gameStarted]);
+
   return {
     room,
     gameState,
@@ -252,6 +276,7 @@ export function useGameRoom(playerName: string) {
     playerId,
     lastMessage,
     pendingAction,
+    myCovertCards,
     connect,
     disconnect,
     sendMessage,
