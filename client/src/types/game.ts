@@ -27,6 +27,7 @@ export type ComponentType =
 
 export interface CardData {
 	id: string;
+	baseId: string;
 	name: string;
 	type: CardType;
 	effect: string;
@@ -79,6 +80,7 @@ export interface PlayerData {
 	hasLaunched: boolean;
 	hasLanded: boolean;
 	isEliminated: boolean;
+	isBot: boolean;
 }
 
 export interface LaunchRollResult {

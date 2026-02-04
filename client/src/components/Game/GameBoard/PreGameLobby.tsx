@@ -17,7 +17,10 @@ import {
 	IconCheck,
 	IconCircleCheck,
 	IconCircleDashed,
+	IconRobot,
 	IconRocket,
+	IconUserMinus,
+	IconUserPlus,
 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import type { PlayerData } from './GameBoard.types';
@@ -28,6 +31,8 @@ interface PreGameLobbyProps {
 	playerId: string | null;
 	onReady: () => void;
 	onStartGame: () => void;
+	onAddBot: () => void;
+	onRemoveBot: () => void;
 	pendingAction?: string | null;
 }
 
@@ -37,10 +42,15 @@ export function PreGameLobby({
 	playerId,
 	onReady,
 	onStartGame,
+	onAddBot,
+	onRemoveBot,
 	pendingAction,
 }: PreGameLobbyProps) {
 	const allReady = players.length >= 2 && players.every((p) => p.isReady);
 	const readyCount = players.filter((p) => p.isReady).length;
+	const botCount = players.filter((p) => p.isBot).length;
+	const canAddBot = players.length < 6;
+	const canRemoveBot = botCount > 0;
 
 	return (
 		<motion.div
@@ -127,14 +137,19 @@ export function PreGameLobby({
 							>
 								<Group justify="space-between">
 									<Group gap="sm">
-										<Avatar size="sm" color="violet" radius="xl">
-											{player.name.charAt(0).toUpperCase()}
+										<Avatar size="sm" color={player.isBot ? 'cyan' : 'violet'} radius="xl">
+											{player.isBot ? <IconRobot size={14} /> : player.name.charAt(0).toUpperCase()}
 										</Avatar>
 										<Text size="sm" c="white" fw={500}>
 											{player.name}
 											{player.sessionId === playerId && (
 												<Text span c="dimmed" size="xs" ml={4}>
 													(You)
+												</Text>
+											)}
+											{player.isBot && (
+												<Text span c="cyan" size="xs" ml={4}>
+													(Bot)
 												</Text>
 											)}
 										</Text>
@@ -179,6 +194,32 @@ export function PreGameLobby({
 							Need at least 2 players to start the mission
 						</Alert>
 					)}
+
+					{/* Bot Controls */}
+					<Group gap="sm" w="100%" justify="center">
+						<Button
+							size="sm"
+							variant="light"
+							color="cyan"
+							leftSection={<IconUserPlus size={16} />}
+							onClick={onAddBot}
+							disabled={!canAddBot || pendingAction === 'add_bot'}
+							loading={pendingAction === 'add_bot'}
+						>
+							Add Bot
+						</Button>
+						<Button
+							size="sm"
+							variant="light"
+							color="red"
+							leftSection={<IconUserMinus size={16} />}
+							onClick={onRemoveBot}
+							disabled={!canRemoveBot || pendingAction === 'remove_bot'}
+							loading={pendingAction === 'remove_bot'}
+						>
+							Remove Bot
+						</Button>
+					</Group>
 
 					<Group gap="sm" w="100%">
 						<Button

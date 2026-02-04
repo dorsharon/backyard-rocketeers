@@ -24,7 +24,8 @@ export type ComponentType =
  * Synchronized across all clients via Colyseus.
  */
 export class CardSchema extends Schema {
-	@type('string') id: string = '';
+	@type('string') id: string = ''; // Unique instance ID (for multiple copies)
+	@type('string') baseId: string = ''; // Base card ID for CardRegistry lookup
 	@type('string') name: string = '';
 	@type('string') type: 'component' | 'sabotage' | 'ability' | 'enhancement' =
 		'component';
@@ -44,6 +45,7 @@ export class CardSchema extends Schema {
 
 	constructor(
 		id: string,
+		baseId: string,
 		name: string,
 		cardType: 'component' | 'sabotage' | 'ability' | 'enhancement',
 		effect: string = '',
@@ -55,6 +57,7 @@ export class CardSchema extends Schema {
 	) {
 		super();
 		this.id = id;
+		this.baseId = baseId;
 		this.name = name;
 		this.type = cardType;
 		this.effect = effect;

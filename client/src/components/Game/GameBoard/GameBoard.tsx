@@ -144,6 +144,8 @@ export function GameBoard({
 						playerId={playerId}
 						onReady={() => handleSendMessage('ready')}
 						onStartGame={() => handleSendMessage('start_game')}
+						onAddBot={() => handleSendMessage('add_bot')}
+						onRemoveBot={() => handleSendMessage('remove_bot')}
 						pendingAction={pendingAction}
 					/>
 				</Box>
@@ -335,7 +337,18 @@ export function GameBoard({
 											setSelectedCardId(selectedCardId === cardId ? null : cardId);
 										}
 									}}
+									onPlayCard={(cardId) => {
+										handleSendMessage('play_card', { cardId });
+										setSelectedCardId(null);
+									}}
 									isPlayable={isMyTurn && gameState.currentPhase === 'action'}
+									unplayableReason={
+										!isMyTurn
+											? `Wait for ${currentTurnPlayer?.name || 'other player'}'s turn`
+											: gameState.currentPhase === 'draw'
+												? 'Draw a card first'
+												: undefined
+									}
 								/>
 							</Stack>
 						</Card>

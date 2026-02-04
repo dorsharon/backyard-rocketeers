@@ -55,5 +55,7 @@ export interface CardHandProps {
 	}>;
 	selectedCardId?: string | null;
 	onCardClick?: (cardId: string) => void;
+	onPlayCard?: (cardId: string) => void;
 	isPlayable?: boolean;
+	unplayableReason?: string;
 }

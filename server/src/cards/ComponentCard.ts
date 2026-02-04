@@ -120,6 +120,7 @@ export abstract class ComponentCard extends Card {
 	toSchema(): CardSchema {
 		return new CardSchema(
 			this.generateInstanceId(),
+			this.id, // baseId for CardRegistry lookup
 			this.name,
 			this.type,
 			this.effect,

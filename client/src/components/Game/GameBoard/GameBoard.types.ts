@@ -16,6 +16,7 @@ export interface PlayerData {
 	name: string;
 	level: number;
 	isReady: boolean;
+	isBot: boolean;
 	hand: CardData[];
 	groundFuel: number;
 	hasLaunchPad: boolean;

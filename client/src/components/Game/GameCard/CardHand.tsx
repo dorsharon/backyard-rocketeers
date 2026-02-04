@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Button, Portal } from '@mantine/core';
+import { ActionIcon, Box, Button, Portal, Tooltip } from '@mantine/core';
 import { IconCards, IconX } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -29,8 +29,10 @@ const CARD_HAND = {
 export function CardHand({
 	cards,
 	selectedCardId,
-	onCardClick,
+	onCardClick: _onCardClick,
+	onPlayCard,
 	isPlayable = true,
+	unplayableReason,
 }: CardHandProps) {
 	const totalCards = cards.length;
 	const [isMobile, setIsMobile] = useState(false);
@@ -85,7 +87,7 @@ export function CardHand({
 
 	const handlePlayCard = () => {
 		if (zoomedCardId && isPlayable) {
-			onCardClick?.(zoomedCardId);
+			onPlayCard?.(zoomedCardId);
 			setZoomedCardId(null);
 		}
 	};
@@ -277,20 +279,24 @@ export function CardHand({
 										Play Card
 									</Button>
 								) : (
-									<motion.p
-										initial={{ opacity: 0 }}
-										animate={{ opacity: 0.5 }}
-										style={{
-											color: 'white',
-											fontSize: 14,
-											margin: 0,
-											marginTop: 8,
-											textAlign: 'center',
-											fontStyle: 'italic',
-										}}
+									<Tooltip
+										label={unplayableReason || "Wait for your turn to play"}
+										position="bottom"
+										withArrow
 									>
-										Wait for your turn to play
-									</motion.p>
+										<Button
+											size="lg"
+											leftSection={<IconCards size={20} />}
+											variant="light"
+											color="gray"
+											disabled
+											style={{
+												marginTop: 8,
+											}}
+										>
+											Play Card
+										</Button>
+									</Tooltip>
 								)}
 							</motion.div>
 						</motion.div>

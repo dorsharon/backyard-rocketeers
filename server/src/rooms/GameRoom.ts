@@ -3,6 +3,7 @@ import { CardRegistry } from '../cards/CardRegistry';
 import type { CardSchema } from '../schemas/CardSchema';
 import { GameState } from '../schemas/GameState';
 import { Player } from '../schemas/Player';
+import { BotAI } from '../utils/BotAI';
 import { roll1d6, rollDice, shuffleArray, sumDice } from '../utils/dice';
 
 /**
@@ -15,6 +16,8 @@ import { roll1d6, rollDice, shuffleArray, sumDice } from '../utils/dice';
 export class GameRoom extends Room<GameState> {
 	maxClients = 6;
 	minClients = 2;
+	private botCounter = 0;
+	private botNames = ['RocketBot', 'SpaceAI', 'MarsBot', 'AstroBot', 'CosmicAI', 'StarBot'];
 
 	onCreate(_options: Record<string, unknown>): void {
 		// Initialize game state
@@ -29,6 +32,8 @@ export class GameRoom extends Room<GameState> {
 		this.onMessage('play_card', this.handlePlayCard.bind(this));
 		this.onMessage('end_turn', this.handleEndTurn.bind(this));
 		this.onMessage('launch_rocket', this.handleLaunchRocket.bind(this));
+		this.onMessage('add_bot', this.handleAddBot.bind(this));
+		this.onMessage('remove_bot', this.handleRemoveBot.bind(this));
 
 		// Initialize decks (will be populated later with actual cards)
 		this.initializeDecks();
@@ -201,6 +206,9 @@ export class GameRoom extends Room<GameState> {
 		});
 
 		console.log('Game started!');
+
+		// Check if first player is a bot
+		this.checkAndProcessBotTurn();
 	}
 
 	/**
@@ -350,8 +358,8 @@ export class GameRoom extends Room<GameState> {
 		const cardSchema = player.hand[cardIndex];
 		if (!cardSchema) return;
 
-		// Get card implementation from registry
-		const cardImpl = CardRegistry.getCardById(cardSchema.id);
+		// Get card implementation from registry using baseId
+		const cardImpl = CardRegistry.getCardById(cardSchema.baseId);
 		if (!cardImpl) {
 			client.send('error', { message: 'Unknown card type!' });
 			return;
@@ -416,6 +424,9 @@ export class GameRoom extends Room<GameState> {
 			currentPlayerId: this.state.playerOrder[this.state.currentPlayerIndex],
 			turnCount: this.state.turnCount,
 		});
+
+		// Check if next player is a bot
+		this.checkAndProcessBotTurn();
 	}
 
 	/**
@@ -558,5 +569,333 @@ export class GameRoom extends Room<GameState> {
 		});
 
 		console.log(`Game ended: ${reason}`);
+	}
+
+	/**
+	 * Handle add bot request.
+	 * Creates a bot player that will be controlled by the server.
+	 */
+	private handleAddBot(client: Client, _message: unknown): void {
+		if (this.state.gameStarted) {
+			client.send('error', { message: 'Cannot add bot after game started' });
+			return;
+		}
+
+		if (this.state.players.size >= this.maxClients) {
+			client.send('error', { message: 'Room is full' });
+			return;
+		}
+
+		const botId = `bot_${Date.now()}_${this.botCounter}`;
+		const botName = this.botNames[this.botCounter % this.botNames.length] || 'Bot';
+		this.botCounter++;
+
+		const bot = new Player(botId, botName);
+		bot.isBot = true;
+		bot.isReady = true; // Bots are always ready
+
+		this.state.players.set(botId, bot);
+		this.state.playerOrder.push(botId);
+
+		this.broadcast('bot_added', {
+			playerId: botId,
+			playerName: botName,
+			playerCount: this.state.players.size,
+		});
+
+		// Check if all players are ready (bots are always ready)
+		this.checkAllPlayersReady();
+	}
+
+	/**
+	 * Handle remove bot request.
+	 */
+	private handleRemoveBot(client: Client, message: { botId?: string }): void {
+		if (this.state.gameStarted) {
+			client.send('error', { message: 'Cannot remove bot after game started' });
+			return;
+		}
+
+		// Find a bot to remove (specific one or last one)
+		let botIdToRemove: string | null = null;
+
+		if (message.botId) {
+			const player = this.state.players.get(message.botId);
+			if (player?.isBot) {
+				botIdToRemove = message.botId;
+			}
+		} else {
+			// Remove the last bot
+			for (let i = this.state.playerOrder.length - 1; i >= 0; i--) {
+				const playerId = this.state.playerOrder[i];
+				if (playerId) {
+					const player = this.state.players.get(playerId);
+					if (player?.isBot) {
+						botIdToRemove = playerId;
+						break;
+					}
+				}
+			}
+		}
+
+		if (!botIdToRemove) {
+			client.send('error', { message: 'No bot found to remove' });
+			return;
+		}
+
+		const bot = this.state.players.get(botIdToRemove);
+		if (!bot) return;
+
+		this.state.players.delete(botIdToRemove);
+		const index = this.state.playerOrder.findIndex((id: string) => id === botIdToRemove);
+		if (index !== -1) {
+			this.state.playerOrder.splice(index, 1);
+		}
+
+		this.broadcast('bot_removed', {
+			playerId: botIdToRemove,
+			playerName: bot.name,
+			playerCount: this.state.players.size,
+		});
+	}
+
+	/**
+	 * Check if all players are ready and broadcast if so.
+	 */
+	private checkAllPlayersReady(): void {
+		let allReady = true;
+		this.state.players.forEach((p: Player) => {
+			if (!p.isReady) allReady = false;
+		});
+
+		if (allReady && this.state.players.size >= this.minClients) {
+			this.broadcast('all_players_ready', {});
+		}
+	}
+
+	/**
+	 * Process bot turn automatically.
+	 * Called when a bot's turn begins.
+	 */
+	private async processBotTurn(bot: Player): Promise<void> {
+		if (this.state.gameEnded) return;
+
+		console.log(`Processing bot turn for ${bot.name}`);
+
+		// Draw phase
+		if (this.state.currentPhase === 'draw') {
+			await this.delay(BotAI.getActionDelay());
+			this.botDrawCard(bot);
+		}
+
+		// Action phase - play cards
+		if (this.state.currentPhase === 'action') {
+			let cardsPlayed = 0;
+			const maxCardsToPlay = 3; // Limit cards per turn to prevent infinite loops
+
+			while (cardsPlayed < maxCardsToPlay && this.state.currentPhase === 'action') {
+				await this.delay(BotAI.getActionDelay());
+
+				// Check if can launch
+				if (BotAI.shouldLaunch(bot)) {
+					this.botLaunchRocket(bot);
+					break;
+				}
+
+				// Try to play a card
+				const decision = BotAI.decideCardToPlay(this.state, bot);
+				if (decision) {
+					this.botPlayCard(bot, decision.cardId, decision.targetPlayerId);
+					cardsPlayed++;
+				} else {
+					break;
+				}
+			}
+
+			// End turn
+			await this.delay(BotAI.getActionDelay());
+			this.botEndTurn(bot);
+		}
+	}
+
+	/**
+	 * Bot draws a card.
+	 */
+	private botDrawCard(bot: Player): void {
+		const drawCount = this.state.isPlayerBehind(bot) ? 2 : 1;
+		this.dealCards(bot, drawCount, bot.level);
+
+		this.broadcast('cards_drawn', {
+			playerId: bot.sessionId,
+			count: drawCount,
+			handSize: bot.hand.length,
+		});
+
+		this.state.currentPhase = 'action';
+	}
+
+	/**
+	 * Bot plays a card.
+	 */
+	private botPlayCard(bot: Player, cardId: string, targetPlayerId?: string): void {
+		const cardIndex = bot.hand.findIndex((c: CardSchema) => c.id === cardId);
+		if (cardIndex === -1) return;
+
+		const cardSchema = bot.hand[cardIndex];
+		if (!cardSchema) return;
+
+		const cardImpl = CardRegistry.getCardById(cardSchema.baseId);
+		if (!cardImpl || !cardImpl.canPlay(this.state, bot, targetPlayerId)) return;
+
+		bot.hand.splice(cardIndex, 1);
+
+		try {
+			cardImpl.apply(this.state, bot, targetPlayerId);
+
+			this.broadcast('card_played', {
+				playerId: bot.sessionId,
+				cardId: cardId,
+				cardName: cardSchema.name,
+				cardType: cardSchema.type,
+				targetPlayerId: targetPlayerId || null,
+				success: true,
+			});
+		} catch (error) {
+			console.error('Bot error executing card:', error);
+			bot.hand.push(cardSchema);
+		}
+	}
+
+	/**
+	 * Bot launches rocket.
+	 */
+	private botLaunchRocket(bot: Player): void {
+		if (!bot.canLaunch()) return;
+
+		this.broadcast('launch_initiated', { playerId: bot.sessionId });
+
+		let launchSuccess = true;
+		const componentRolls: Array<{
+			componentName: string;
+			tier: number;
+			roll: number;
+			success: boolean;
+		}> = [];
+
+		bot.rocketComponents.forEach((component: CardSchema) => {
+			if (component.type !== 'component' || !component.isRevealed) return;
+
+			const roll = roll1d6();
+			const result = {
+				componentName: component.name,
+				tier: component.tier,
+				roll: roll,
+				success: true,
+			};
+
+			if (component.tier === 1 && roll <= 2) {
+				result.success = false;
+				launchSuccess = false;
+			} else if (component.tier === 2 && roll === 1) {
+				result.success = false;
+				launchSuccess = false;
+			}
+
+			componentRolls.push(result);
+		});
+
+		this.broadcast('launch_rolls', {
+			playerId: bot.sessionId,
+			rolls: componentRolls,
+			success: launchSuccess,
+		});
+
+		if (launchSuccess) {
+			bot.level = 2;
+			bot.hasLaunched = true;
+			bot.groundFuel = 0;
+			bot.spaceFuel = 0;
+
+			const distanceRolls = rollDice(3);
+			const distance = sumDice(distanceRolls) * 1000;
+			bot.distanceFromMars = distance;
+			bot.originalRocketStrength = bot.getRocketStrength();
+
+			this.dealCards(bot, 3, 2);
+
+			this.broadcast('launch_success', {
+				playerId: bot.sessionId,
+				startingDistance: distance,
+				distanceRolls: distanceRolls,
+			});
+		} else {
+			const failedComponents = componentRolls.filter((r) => !r.success);
+			failedComponents.forEach((failed) => {
+				const index = bot.rocketComponents.findIndex(
+					(c: CardSchema) => c.name === failed.componentName,
+				);
+				if (index !== -1) {
+					bot.rocketComponents.splice(index, 1);
+				}
+			});
+
+			this.broadcast('launch_failed', {
+				playerId: bot.sessionId,
+				failedComponents: failedComponents.map((f) => f.componentName),
+			});
+		}
+	}
+
+	/**
+	 * Bot ends their turn.
+	 */
+	private botEndTurn(bot: Player): void {
+		// Discard to 7 cards if over limit
+		while (bot.hand.length > 7) {
+			const discardIndex = Math.floor(Math.random() * bot.hand.length);
+			bot.hand.splice(discardIndex, 1);
+		}
+
+		if (bot.hasWinCondition()) {
+			this.declareWinner(bot);
+			return;
+		}
+
+		const previousPlayerId = bot.sessionId;
+		this.state.nextTurn();
+
+		this.broadcast('turn_ended', {
+			previousPlayerId: previousPlayerId,
+			currentPlayerId: this.state.playerOrder[this.state.currentPlayerIndex],
+			turnCount: this.state.turnCount,
+		});
+
+		// Check if next player is also a bot
+		this.checkAndProcessBotTurn();
+	}
+
+	/**
+	 * Check if current player is a bot and process their turn.
+	 */
+	private checkAndProcessBotTurn(): void {
+		if (this.state.gameEnded) return;
+
+		const currentPlayerId = this.state.playerOrder[this.state.currentPlayerIndex];
+		if (!currentPlayerId) return;
+
+		const currentPlayer = this.state.players.get(currentPlayerId);
+		if (currentPlayer?.isBot) {
+			// Small delay before bot starts their turn
+			setTimeout(() => {
+				this.processBotTurn(currentPlayer);
+			}, 500);
+		}
+	}
+
+	/**
+	 * Helper to create a delay (for bot timing).
+	 */
+	private delay(ms: number): Promise<void> {
+		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
 }

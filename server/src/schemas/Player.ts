@@ -48,6 +48,7 @@ export class Player extends Schema {
 	@type('boolean') hasLaunched: boolean = false; // Reached Level 2
 	@type('boolean') hasLanded: boolean = false; // Reached Level 3
 	@type('boolean') isEliminated: boolean = false;
+	@type('boolean') isBot: boolean = false; // True if this is a bot player
 
 	constructor(sessionId: string, name: string) {
 		super();
